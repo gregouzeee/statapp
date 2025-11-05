@@ -1,0 +1,16 @@
+# Core dependencies
+torch>=2.0.0
+transformers>=4.35.0
+numpy>=1.24.0
+tqdm>=4.65.0
+
+# Optional but recommended
+scipy>=1.10.0
+pandas>=2.0.0
+
+# For notebooks
+jupyter>=1.0.0
+ipywidgets>=8.0.0
+
+# For data handling
+spacy>=3.5.0
