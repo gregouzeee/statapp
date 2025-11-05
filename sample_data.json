@@ -1,0 +1,34 @@
+{
+  "test_cases": [
+    {
+      "name": "Einstein - Lieu de naissance",
+      "sentences": [
+        "Albert Einstein was born in Germany.",
+        "Albert Einstein was born in France.",
+        "Albert Einstein was born in Ulm."
+      ],
+      "sampled_passages": [
+        "Albert Einstein was born in Ulm, Germany, in 1879.",
+        "Einstein, a German-born physicist, was born in 1879 in Ulm.",
+        "Born in Germany in 1879, Einstein would become one of the greatest physicists."
+      ],
+      "expected_scores": [0.0, 1.0, 0.0],
+      "comments": "La première et troisième phrase sont correctes, la deuxième est fausse"
+    },
+    {
+      "name": "Einstein - Prix Nobel",
+      "sentences": [
+        "Einstein won the Nobel Prize in Physics.",
+        "Einstein won the Nobel Prize in Chemistry.",
+        "Einstein received the Nobel Prize in 1921."
+      ],
+      "sampled_passages": [
+        "In 1921, Einstein won the Nobel Prize in Physics for his explanation of the photoelectric effect.",
+        "Einstein received the Nobel Prize in Physics in 1921.",
+        "The Nobel Prize in Physics was awarded to Einstein in 1921 for his work on the photoelectric effect."
+      ],
+      "expected_scores": [0.0, 1.0, 0.0],
+      "comments": "Il a gagné en Physique (pas Chimie) en 1921"
+    }
+  ]
+}
