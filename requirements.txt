@@ -14,3 +14,7 @@ ipywidgets>=8.0.0
 
 # For data handling
 spacy>=3.5.0
+
+#for api gemini
+python-dotenv
+google-genai
