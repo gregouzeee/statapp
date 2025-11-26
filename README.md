@@ -1,4 +1,4 @@
-# statapp
+# Statapp
 
 ##  Python Version
 
@@ -31,11 +31,11 @@ Vous pouvez voir un exemple dans le fichier `env_example.sh`
 
 ---
 
-## 🧠 Évaluer un score de confiance avec les méthodes white-box
+## Évaluer un score de confiance avec les méthodes white-box
 
 L’idée de cette partie du projet est de **mesurer la confiance du modèle** pour chaque réponse en exploitant les **log-probabilités des tokens** retournées par Gemini.
 
-## 📁 Fichiers importants
+## Fichiers importants
 
 - `white_box.py`  
   Contient la classe principale `UnifiedProbGeminiBatch` qui :
@@ -155,7 +155,7 @@ Pour chaque phrase *s_i* et passage *p_j* :
 - `false` → non supporté  
 - parse KO → score neutre `0.5`
 
-👉 Le modèle doit répondre **uniquement** :
+Le modèle doit répondre **uniquement** :
 
 ```json
 {"answers":[true,false,true,...]}
@@ -164,7 +164,7 @@ Pour chaque phrase *s_i* et passage *p_j* :
 ---
 
 
-## 📁 Fichiers importants
+## Fichiers importants
 
 - `LLM_judge_gemini.py`  
   Contient la classe `SelfCheckGeminiBatch`.
