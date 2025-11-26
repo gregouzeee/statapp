@@ -1,5 +1,4 @@
-# selfcheck_gemini_batch.py
-import os, re, json, time, logging
+import re, json, time, logging
 from typing import List, Optional
 import numpy as np
 from google import genai
@@ -16,8 +15,8 @@ class SelfCheckGeminiBatch:
       {"answers": [true|false, ...]}  # même longueur/ordre que le batch
 
     Scoring:
-      True  -> 0.0  (supporté par le contexte)
-      False -> 1.0  (non supporté)
+      True  -> 1.0  (supporté par le contexte)
+      False -> 0.0  (non supporté)
       None/parse KO -> 0.5 (neutre)
     """
     def __init__(
@@ -108,6 +107,7 @@ class SelfCheckGeminiBatch:
 
     # ---------- appels ----------
     def _call_batch(self, context: str, sentences_chunk: List[str]) -> List[float]:
+        """"""
         prompt = self._build_prompt(context, sentences_chunk)
         t0 = time.time()
         try:
@@ -134,7 +134,7 @@ class SelfCheckGeminiBatch:
             logger.warning("Parsed answers is None; returning neutral scores")
             return [0.5] * len(sentences_chunk)
 
-        return [0.0 if v is True else 1.0 if v is False else 0.5 for v in parsed]
+        return [1.0 if v is True else 0.0 if v is False else 0.5 for v in parsed]
 
     # ---------- API publique ----------
     def predict_matrix(

@@ -1,4 +1,3 @@
-# run_batched_selfcheck.py
 import os
 import argparse
 import logging
@@ -18,7 +17,7 @@ def main():
     load_dotenv()
 
     parser = argparse.ArgumentParser(description="Run batched Gemini self-check.")
-    parser.add_argument("--model", default="models/gemini-2.5-flash-lite-preview-06-17")
+    parser.add_argument("--model", default="models/gemini-2.0-flash")
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--log-level", default="INFO", help="DEBUG, INFO, WARNING, ERROR")
     parser.add_argument("--timeout", type=float, default=None, help="Request timeout (seconds)")
@@ -30,14 +29,15 @@ def main():
 
     # === Exemple =======
     sentences = [
-        "Albert Einstein was born in Germany.",
-        "Albert Einstein was born in France.",
-        "Albert Einstein developed the theory of relativity.",
+        "The Eiffel Tower was completed in 1889.",
+        "The Eiffel Tower is 450 meters tall.",
+        "It was originally intended as a temporary structure.",
+        "It was designed by Antoni Gaudí."
     ]
     passages = [
-        "Albert Einstein was born in Ulm, Germany, in 1879. He is best known for developing the theory of relativity.",
-        "Einstein, a German-born physicist born in 1879, developed relativity theory.",
-        "Born in Germany in 1879, Einstein would become one of the greatest physicists.",
+        "The Eiffel Tower, designed by Gustave Eiffel for the 1889 Exposition Universelle in Paris, was completed the same year and quickly became a global symbol of France.",
+        "When it was built, the Eiffel Tower was initially intended to be dismantled after twenty years. However, its usefulness as a radio transmission tower ensured its preservation.",
+        "The Eiffel Tower stands at approximately 324 meters tall, including its antenna. It remained the tallest man-made structure in the world until 1930."
     ]
     #====================
 
