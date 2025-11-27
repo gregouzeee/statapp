@@ -2,8 +2,8 @@ import os
 import argparse
 import logging
 from dotenv import load_dotenv
-import numpy as np
-from LLM_judge_gemini import SelfCheckGeminiBatch
+
+from .LLM_judge_gemini import SelfCheckGeminiBatch
 
 def setup_logging(level: str):
     lvl = getattr(logging, level.upper(), logging.INFO)

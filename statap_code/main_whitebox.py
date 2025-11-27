@@ -4,7 +4,7 @@ import logging
 from dotenv import load_dotenv
 from typing import List, Optional, Tuple
 
-from white_box import UnifiedProbGeminiBatch
+from .white_box import UnifiedProbGeminiBatch
 
 def setup_logging(level: str):
     lvl = getattr(logging, level.upper(), logging.INFO)

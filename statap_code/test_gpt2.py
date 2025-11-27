@@ -1,5 +1,5 @@
 import torch
-from selfcheckgpt_prompt import SelfCheckLLMPrompt
+from .selfcheckgpt_prompt import SelfCheckLLMPrompt
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

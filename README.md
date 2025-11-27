@@ -1,15 +1,16 @@
-# Statapp
+# Statapp Run code
 
-##  Python Version
+## 🐍 Python Version
 
-Développé avec:
+Developed with:
 
 ```bash
 Python 3.12.7
 ```
+
 ---
 
-## Installer les dépendances
+## 📦 Installer les dépendances
 
 Depuis la racine du projet :
 
@@ -19,7 +20,7 @@ pip install -r requirements.txt
 
 ---
 
-## Fichier `.env`
+## 🔑 Fichier `.env`
 
 Pour faire marcher les différents codes, il faut créer un fichier `.env` à la racine du projet avec :
 
@@ -27,15 +28,16 @@ Pour faire marcher les différents codes, il faut créer un fichier `.env` à la
 GEMINI_API_KEY="votre_clé"
 ```
 
-Vous pouvez voir un exemple dans le fichier `env_example.sh` 
+Vous pouvez voir un exemple dans le fichier `env_example.sh` :
+
+```bash
+# Create an AI Studio API KEY on https://aistudio.google.com/apikey
+GEMINI_API_KEY="Your_API_KEY"
+```
 
 ---
 
-## Évaluer un score de confiance avec les méthodes white-box
-
-L’idée de cette partie du projet est de **mesurer la confiance du modèle** pour chaque réponse en exploitant les **log-probabilités des tokens** retournées par Gemini.
-
-## Fichiers importants
+## 📁 Fichiers importants
 
 - `white_box.py`  
   Contient la classe principale `UnifiedProbGeminiBatch` qui :
@@ -52,6 +54,10 @@ L’idée de cette partie du projet est de **mesurer la confiance du modèle** p
   - des réponses QCM (`mode=string`).
 
 ---
+
+## 1. Évaluer un score de confiance avec les méthodes white-box
+
+L’idée de cette partie du projet est de **mesurer la confiance du modèle** pour chaque réponse en exploitant les **log-probabilités des tokens** retournées par Gemini.
 
 ### Principe général
 
@@ -87,9 +93,17 @@ L’idée de cette partie du projet est de **mesurer la confiance du modèle** p
 
 ---
 
-## Comment lancer `main_whitebox.py`
+## ▶️ Comment lancer `main_whitebox.py`
 
-### Mode booléen
+Assurez-vous d’abord que :
+
+- l’environnement Python est activé,
+- les dépendances sont installées,
+- le fichier `.env` avec `GEMINI_API_KEY` est présent.
+
+Ensuite, depuis la racine du projet :
+
+### 🔹 Mode booléen
 
 Questions dont la réponse attendue est `True` ou `False`.
 
@@ -99,36 +113,34 @@ python main_whitebox.py --mode bool
 
 ---
 
-### Mode numérique (`float`)
+### 🔹 Mode numérique (`float`)
 
-Questions qui doivent renvoyer un **nombre**.
+Questions qui doivent renvoyer un **float**.
 
 ```bash
-python main_whitebox.py --mode float
+python -m statap_code.main_whitebox --mode float
 ```
 
 ---
 
-### Mode QCM (`string`)
+### 🔹 Mode QCM (`string`)
 
 Questions à choix multiples où la réponse est une lettre (`A`, `B`, `C`, `D`, …).
 
 ```bash
-python main_whitebox.py --mode string
+python -m statap_code.main_whitebox --mode string
 ```
-
-Il suffit de changer les querries dans le fichier `main_whitebox.py` pour traiter d'autres exemples.
 ---
 
-## Arguments disponibles
+## ⚙️ Arguments disponibles
 
 ```bash
-python main_whitebox.py   --mode {bool,float,string}   --model models/gemini-2.0-flash   --batch-size 16   --log-level INFO
+python -m statap_code.main_whitebox   --mode {bool,float,string}   --model models/gemini-2.0-flash   --batch-size 16   --log-level INFO
 ```
 
 ---
 
-## Format de sortie
+## 📤 Format de sortie
 
 Exemple d’affichage :
 
@@ -144,7 +156,7 @@ Exemple d’affichage :
 
 
 
-## Evaluer les phrases générer par un LLM (SelfCheckGPT)
+## 2. Evaluer les phrases générer par un LLM (SelfCheckGPT)
 
 Cette méthode suit l’esprit du papier **SelfCheckGPT (2023)** :  
 un LLM joue le rôle de *juge* pour vérifier si une phrase est **supportée** par un *ensemble de passages*.
@@ -164,7 +176,7 @@ Le modèle doit répondre **uniquement** :
 ---
 
 
-## Fichiers importants
+## 📁 Fichiers importants
 
 - `LLM_judge_gemini.py`  
   Contient la classe `SelfCheckGeminiBatch`.
@@ -191,7 +203,7 @@ Renvoie :
 
 Nous voulons vérifier si un modèle hallucine dans un résumé généré.
 
-### Phrases (résumé du modèle)
+### 🔹 Phrases (résumé du modèle)
 
 ```text
 1. The Eiffel Tower was completed in 1889.
@@ -200,7 +212,7 @@ Nous voulons vérifier si un modèle hallucine dans un résumé généré.
 4. It was designed by Antoni Gaudí.
 ```
 
-### Passages (sources candidates)
+### 🔹 Passages (sources candidates)
 
 ```text
 A. The Eiffel Tower, designed by Gustave Eiffel for the 1889 Exposition Universelle 
@@ -223,23 +235,23 @@ Ici :
 
 ---
 
-## Lancer l’exemple SelfCheck
+## ▶️ Lancer l’exemple SelfCheck
 
 Exécuter :
 
 ```bash
-python main_LLM_judge.py
+python -m statap_code.main_LLM_judge   
 ```
 
 Ou avec paramètres :
 
 ```bash
-python main_LLM_judge.py --batch-size 16 --log-level INFO
+python -m statap_code.main_LLM_judge --batch-size 16 --log-level INFO
 ```
 
 ---
 
-##  Exemple de sortie attendue
+## 📤 Exemple de sortie attendue
 
 ```
 === Score matrix (M x K) ===
