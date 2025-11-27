@@ -35,23 +35,6 @@ Vous pouvez voir un exemple dans le fichier `env_example.sh` :
 GEMINI_API_KEY="Your_API_KEY"
 ```
 
----
-
-## 📁 Fichiers importants
-
-- `white_box.py`  
-  Contient la classe principale `UnifiedProbGeminiBatch` qui :
-  - construit les prompts pour Gemini,
-  - appelle l’API avec `response_logprobs=True`,
-  - parse le JSON de sortie,
-  - extrait les tokens + logprobs,
-  - calcule un score de confiance pour chaque réponse.
-
-- `main_whitebox.py`  
-  Script en ligne de commande qui montre comment utiliser `UnifiedProbGeminiBatch` pour :
-  - des réponses booléennes (`mode=bool`),
-  - des réponses numériques (`mode=float`),
-  - des réponses QCM (`mode=string`).
 
 ---
 
@@ -90,6 +73,23 @@ L’idée de cette partie du projet est de **mesurer la confiance du modèle** p
    ```text
    (valeur, probabilité)
    ```
+---
+
+## 📁 Fichiers importants
+
+- `white_box.py`  
+  Contient la classe principale `UnifiedProbGeminiBatch` qui :
+  - construit les prompts pour Gemini,
+  - appelle l’API avec `response_logprobs=True`,
+  - parse le JSON de sortie,
+  - extrait les tokens + logprobs,
+  - calcule un score de confiance pour chaque réponse.
+
+- `main_whitebox.py`  
+  Script en ligne de commande qui montre comment utiliser `UnifiedProbGeminiBatch` pour :
+  - des réponses booléennes (`mode=bool`),
+  - des réponses numériques (`mode=float`),
+  - des réponses QCM (`mode=string`).
 
 ---
 
