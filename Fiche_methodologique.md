@@ -10,7 +10,7 @@
 - 1.3. **FEVER** 
 
 ## 2. Méthodes incertitudes 
-- 2.1 SelfCheckGPT
+- 2.1 **SelfCheckGPT**
 
 ## 3. Modèles retenus 
 
@@ -178,9 +178,9 @@ SelfCheckGPT est une méthode permettant d'évaluer l'incertitude d'un LLM en v�
 ---
 
 ### Variantes implémentées  
-- **SelfCheckGPT-BERTScore** : Mesure la similarité sémantique entre les phrases générées
-- **SelfCheckGPT-NLI** : Utilise un modèle de Natural Language Inference pour détecter les contradictions
+- **SelfCheckGPT-QA** : Génère des questions à choix multiples (MQAG) et compare les réponses entre échantillons
 - **SelfCheckGPT-Prompt** : Utilise un LLM pour évaluer la cohérence des réponses (LLM-based)
+- **SelfCheckGPT-BERTScore** : Mesure la similarité sémantique entre les phrases générées
 
 ---
 
