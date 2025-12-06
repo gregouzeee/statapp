@@ -10,6 +10,7 @@
 - 1.3. **FEVER** 
 
 ## 2. Méthodes incertitudes 
+- 2.1 SelfCheckGPT
 
 ## 3. Modèles retenus 
 
