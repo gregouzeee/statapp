@@ -156,7 +156,7 @@ Exemple d’affichage :
 
 
 
-## 2. Evaluer les phrases générer par un LLM (SelfCheckGPT)
+## 2. Evaluer les phrases générées par un LLM (SelfCheckGPT)
 
 Cette méthode suit l’esprit du papier **SelfCheckGPT (2023)** :  
 un LLM joue le rôle de *juge* pour vérifier si une phrase est **supportée** par un *ensemble de passages*.
