@@ -11,6 +11,7 @@
 
 ## 2. Méthodes incertitudes 
 - 2.1 **SelfCheckGPT**
+- 2.2 **Conformal Prediction**
 
 ## 3. Modèles retenus 
 
@@ -207,7 +208,7 @@ SelfCheckGPT est une méthode permettant d'évaluer l'incertitude d'un LLM en v�
 
 ---
 
-# 2.2 Article Benchmark  
+## 2.2 Conformal Prediction  
 
 **Objectif** :
 - Mesurer non seulement l’accuracy des LLMs, mais aussi l’incertitude de leurs réponses via conformal prediction
