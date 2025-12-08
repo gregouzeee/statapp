@@ -7,7 +7,8 @@
 ## 1. Datasets
 - 1.1. **GSM8K** 
 - 1.2. **FinQA** 
-- 1.3. **FEVER** 
+- 1.3. **FEVER**
+- 1.4 **MMLU**
 
 ## 2. Méthodes incertitudes 
 - 2.1 **SelfCheckGPT**
@@ -155,6 +156,62 @@ Chaque ligne contient trois colonnes principales :
 
 ```json
 {"claim":"Stranger Things is set in Bloomington, Indiana.","label":"REFUTES","evidence":[["Stranger_Things",2]]}
+```
+
+---
+
+## 1.4 Dataset MMLU — Massive Multitask Language Understanding
+
+MMLU (*Massive Multitask Language Understanding*) est un dataset conçu pour évaluer les **connaissances générales** et la **compréhension multitâche** des modèles de langage à travers un large éventail de disciplines académiques.
+
+---
+
+### Format
+
+Chaque ligne contient quatre colonnes principales :
+- **"question"** : La question à résoudre au format **string**
+- **"subject"** : La discipline académique (parmi 57 catégories) au format **string**
+- **"choices"** : Liste de 4 choix possibles au format **liste de strings**
+- **"answer"** : La lettre de la réponse correcte (A, B, C ou D) au format **string**
+
+---
+
+###  Taille du dataset
+- **Total** : ~15 908 questions
+- **Dev set** : 285 questions (5 par sujet, pour few-shot examples)
+- **Validation set** : 1 540 questions (pour hyperparamètres)
+- **Test set** : 14 079 questions
+- **Disciplines** : 57 sujets académiques regroupés en 4 catégories principales
+
+---
+
+###  Catégories principales
+- **STEM** : Mathématiques, Physique, Chimie, Informatique, Ingénierie
+- **Humanities** : Histoire, Philosophie, Droit
+- **Social Sciences** : Économie, Psychologie, Sociologie
+- **Others** : Médecine, Géographie, et autres domaines spécialisés
+
+---
+
+###  Caractéristiques
+- Questions à choix multiples (4 options)
+- Évalue à la fois les connaissances factuelles et la capacité de raisonnement
+- Chaque sujet contient au minimum 100 questions de test
+
+---
+
+###  Exemple complet (format JSON)
+
+```json
+{"question":"What is the embryological origin of the hyoid bone?","subject":"anatomy","choices":["The first pharyngeal arch","The first and second pharyngeal arches","The second pharyngeal arch","The second and third pharyngeal arches"],"answer":"D"}
+```
+
+```json
+{"question":"Which of the following is not a characteristic of a perfectly competitive market?","subject":"economics","choices":["Many buyers and sellers","Homogeneous products","Free entry and exit","Price discrimination"],"answer":"D"}
+```
+
+```json
+{"question":"What is the time complexity of binary search?","subject":"computer_science","choices":["O(1)","O(log n)","O(n)","O(n^2)"],"answer":"B"}
 ```
 
 ---
