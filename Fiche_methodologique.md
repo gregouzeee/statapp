@@ -207,5 +207,21 @@ SelfCheckGPT est une méthode permettant d'évaluer l'incertitude d'un LLM en v�
 
 ---
 
-# 3. Modèles utilisés  
-*(section à rédiger)*
+# 2.2 Article Benchmark  
+
+**Objectif** :
+- Mesurer non seulement l’accuracy des LLMs, mais aussi l’incertitude de leurs réponses via conformal prediction
+  
+On se restreint à des tâches NLP reformulées en classification multi-classes (QCM), ce qui permet :
+d’extraire des scores probabilistes, d’appliquer directement la prédiction conforme.
+
+Choix du prompting : tester 3 stratégies (Base / Shared Instruction / Task-specific).
+
+**Collecte des scores** :
+
+- Pour open models : obtenir logits de la tête LM sur le dernier token → softmax → probabilités par option.
+
+- Pour closed models : échantillonner 50 sorties, compter fréquences, appliquer softmax avec temperature.
+
+**Métriques à calculer (pour chaque (modèle, tâche, prompt))** :
+- Acc (exact match) ; SS = moyenne |C(X)| ; CR = coverage rate.
