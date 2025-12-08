@@ -16,7 +16,7 @@
 
 ---
 
-# 1. Méthodes d’incertitude
+# 1. Datasets
 
 Cette section présente les jeux de données utilisés pour évaluer les méthodes d’incertitude appliquées aux modèles de langage.  
 Chaque dataset répond à un objectif spécifique (raisonnement arithmétique, raisonnement financier, vérification de faits).
