@@ -17,7 +17,7 @@ def main():
     load_dotenv()
 
     parser = argparse.ArgumentParser(description="Run batched Gemini self-check.")
-    parser.add_argument("--model", default="models/gemini-2.0-flash")
+    parser.add_argument("--model", default="models/gemini-2.5-flash-lite")
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--log-level", default="INFO", help="DEBUG, INFO, WARNING, ERROR")
     parser.add_argument("--timeout", type=float, default=None, help="Request timeout (seconds)")

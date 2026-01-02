@@ -21,7 +21,7 @@ class SelfCheckGeminiBatch:
     """
     def __init__(
         self,
-        model: str = "models/gemini-2.5-flash-lite-preview-06-17",
+        model: str ,
         api_key: Optional[str] = None,
         temperature: float = 0.0,
         max_output_tokens: int = 64,

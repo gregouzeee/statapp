@@ -29,7 +29,7 @@ def main():
     load_dotenv()
 
     parser = argparse.ArgumentParser(description="Run batched Gemini unified probs (bool, float, or string).")
-    parser.add_argument("--model", default="models/gemini-2.0-flash")
+    parser.add_argument("--model", default="models/gemini-2.5-flash-lite")
     parser.add_argument("--mode", choices=["bool", "float", "string"], required=True, help="Type de sortie attendu.")
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--log-level", default="INFO", help="DEBUG, INFO, WARNING, ERROR")
