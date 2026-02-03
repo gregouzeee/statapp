@@ -326,7 +326,7 @@ def main():
     # ---- Config expérience
     subject = "high_school_mathematics"
     n_samples = 50
-    alpha = 0.1
+    alpha = 0.25
     split_cal_ratio = 0.5
 
     # Modèle (tu as dit que celui-ci marche chez toi)
@@ -504,6 +504,31 @@ def main():
             "size": int(len(C_aps)),
             "p_true": float(p[y]),
         }
+
+    # ---- Calculer métriques d'évaluation sur le test set
+    probs_test = probs_mat[n_cal:]
+    y_test = labels[n_cal:]
+
+    lac_metrics = cp_lac.evaluate(probs_test, y_test)
+    aps_metrics = cp_aps.evaluate(probs_test, y_test)
+
+    meta["test_metrics"] = {
+        "accuracy": float(lac_metrics["accuracy"]),  # même accuracy pour les deux
+        "lac": {
+            "coverage": float(lac_metrics["coverage_rate"]),
+            "avg_set_size": float(lac_metrics["set_size"]),
+            "target_coverage": float(1 - alpha),
+        },
+        "aps": {
+            "coverage": float(aps_metrics["coverage_rate"]),
+            "avg_set_size": float(aps_metrics["set_size"]),
+            "target_coverage": float(1 - alpha),
+        },
+    }
+
+    logger.info("TEST METRICS | accuracy=%.2f%% | LAC coverage=%.2f%% (target=%.2f%%) avg_size=%.2f | APS coverage=%.2f%% (target=%.2f%%) avg_size=%.2f",
+                lac_metrics["accuracy"] * 100, lac_metrics["coverage_rate"] * 100, (1 - alpha) * 100, lac_metrics["set_size"],
+                aps_metrics["coverage_rate"] * 100, (1 - alpha) * 100, aps_metrics["set_size"])
 
     # ---- Écrire fichier final (meta + examples) - aucune ligne summary
     write_output_jsonl(out_jsonl, meta=meta, examples_by_idx=examples_by_idx)
