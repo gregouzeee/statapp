@@ -32,12 +32,13 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-from datasets import load_dataset
+from datasets import load_dataset, concatenate_datasets, get_dataset_config_names
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
 from conformal_prediction import ConformalPredictor
+from tqdm import tqdm
 
 
 # -----------------------
@@ -324,35 +325,48 @@ def as_probs_dict(p: np.ndarray) -> Dict[str, float]:
 
 def main():
     # ---- Config expérience
-    subject = "high_school_mathematics"
-    n_samples = 50
+    #subject = "high_school_mathematics" possible aussi de mettre all
+    n_samples_per_subject = 20
     alpha = 0.25
     split_cal_ratio = 0.5
 
-    # Modèle (tu as dit que celui-ci marche chez toi)
+    # Modèle
     model = "models/gemini-2.5-flash-lite"
     temperature = 0.0
 
     # Throttling / batching (dans le prompt)
-    batch_size = 15
-    batches_per_group = 15
-    sleep_between_groups_s = 60
+    batch_size =10
+    sleep_per_call_s = 4
+    batches_per_group = 10
+    sleep_between_groups_s = 10
 
     # Output unique
-    out_jsonl = Path("statap_code") / "Conformal_prediction" / "output.jsonl"
+    out_jsonl = Path("statap_code") / "Conformal_prediction" / "output_all_subjects.jsonl"
+
+    # Récupérer la liste des sujets MMLU
+    subject_list = get_dataset_config_names("cais/mmlu")
+
+    #Charger les sujets MMLU
+    logger.info(f"Chargement de {len(subject_list)} sujets MMLU...")
+    datasets_list=[]
+    for subject in subject_list:
+        if subject not in ["all","auxiliary_train"]:
+            dataset = load_dataset("cais/mmlu", subject, split="test")
+            if len(dataset) > n_samples_per_subject:
+                dataset = dataset.select(range(n_samples_per_subject))
+
+            datasets_list.append(dataset)
+
+    dataset = concatenate_datasets(datasets_list)
+    n_total = len(dataset)
+
 
     if not GEMINI_API_KEY:
         raise RuntimeError("GEMINI_API_KEY introuvable (.env).")
 
-    logger.info("START | subject=%s | n_samples=%d | alpha=%.2f", subject, n_samples, alpha)
+    logger.info("START | n_subjects=%d | total_samples=%d | alpha=%.2f", len(subject_list), n_total, alpha)
     logger.info("model=%s | batch_size=%d | group=%d | sleep=%ds", model, batch_size, batches_per_group, sleep_between_groups_s)
     logger.info("output=%s", out_jsonl.as_posix())
-
-    # ---- Charger dataset
-    dataset = load_dataset("cais/mmlu", subject, split="test")
-    if len(dataset) > n_samples:
-        dataset = dataset.select(range(n_samples))
-    n_total = len(dataset)
 
     questions = [ex["question"] for ex in dataset]
     choices_list = [ex["choices"] for ex in dataset]
@@ -367,7 +381,8 @@ def main():
         "created_at": old_meta.get("created_at") if isinstance(old_meta, dict) and old_meta.get("created_at") else time.strftime("%Y-%m-%d %H:%M:%S"),
         "updated_at": time.strftime("%Y-%m-%d %H:%M:%S"),
         "subject": subject,
-        "n_samples": int(n_samples),
+        "n_subjects": len(subject_list),
+        "n_total": int(n_total),
         "alpha": float(alpha),
         "split_cal_ratio": float(split_cal_ratio),
         "model": model,
@@ -389,18 +404,21 @@ def main():
     logger.info("Resume: %d/%d examples already present", len(done), n_total)
 
     calls_in_group = 0
-    for start in range(0, n_total, batch_size):
+    for start in tqdm(range(0, n_total, batch_size), desc="Gemini calls"):
         end = min(start + batch_size, n_total)
         idxs = list(range(start, end))
         idxs_todo = [i for i in idxs if i not in done]
         if not idxs_todo:
             continue
-
+        
+        if calls_in_group > 0: 
+            time.sleep(sleep_per_call_s)
+        
         logger.info("Call | items %d-%d/%d | todo=%d", start + 1, end, n_total, len(idxs_todo))
         q_batch = [questions[i] for i in idxs_todo]
         c_batch = [choices_list[i] for i in idxs_todo]
 
-        probs_list = gemini.call_with_retry(q_batch, c_batch, max_retries=5, base_sleep_s=5.0)
+        probs_list = gemini.call_with_retry(q_batch, c_batch, max_retries=5, base_sleep_s=10.0)
 
         for idx, p in zip(idxs_todo, probs_list):
             y = int(true_labels[idx])
@@ -478,7 +496,7 @@ def main():
     meta["n_test"] = int(n_total - n_cal)
 
     # ---- Remplir split + ensembles conformes (pour TOUS les exemples, pas seulement test)
-    for i in range(n_total):
+    for i in tqdm(range(n_total), desc="Conformal prediction"):
         p = probs_mat[i]
         y = int(labels[i])
 
