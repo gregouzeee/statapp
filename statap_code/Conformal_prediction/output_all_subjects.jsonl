@@ -1,4 +1,4 @@
-{"type": "meta", "created_at": "2026-02-03 17:49:46", "updated_at": "2026-02-03 17:51:37", "subject": "world_religions", "n_subjects": 59, "n_total": 1140, "alpha": 0.25, "split_cal_ratio": 0.5, "model": "models/gemini-2.5-flash-lite", "temperature": 0.0, "batch_size": 15, "batches_per_group": 15, "sleep_between_groups_s": 60, "label_meaning": "true is the correct option letter (A/B/C/D) from the dataset. Internally answer is an index: 0=A,1=B,2=C,3=D.", "q_hat_lac": null, "q_hat_aps": null}
+{"type": "meta", "created_at": "2026-02-03 17:49:46", "updated_at": "2026-02-04 09:42:46", "subject": "world_religions", "n_subjects": 59, "n_total": 1140, "alpha": 0.25, "split_cal_ratio": 0.5, "model": "models/gemini-2.5-flash-lite", "temperature": 0.0, "batch_size": 10, "batches_per_group": 10, "sleep_between_groups_s": 10, "label_meaning": "true is the correct option letter (A/B/C/D) from the dataset. Internally answer is an index: 0=A,1=B,2=C,3=D.", "q_hat_lac": null, "q_hat_aps": null}
 {"type": "example", "idx": 0, "split": null, "true": "B", "pred": "B", "probs": {"A": 0.0, "B": 1.0, "C": 0.0, "D": 0.0}, "lac": null, "aps": null}
 {"type": "example", "idx": 1, "split": null, "true": "C", "pred": "C", "probs": {"A": 0.0, "B": 0.0, "C": 1.0, "D": 0.0}, "lac": null, "aps": null}
 {"type": "example", "idx": 2, "split": null, "true": "D", "pred": "A", "probs": {"A": 1.0, "B": 0.0, "C": 0.0, "D": 0.0}, "lac": null, "aps": null}
@@ -344,3 +344,18 @@
 {"type": "example", "idx": 342, "split": null, "true": "C", "pred": "D", "probs": {"A": 0.05, "B": 0.05, "C": 0.1, "D": 0.8}, "lac": null, "aps": null}
 {"type": "example", "idx": 343, "split": null, "true": "A", "pred": "A", "probs": {"A": 0.8, "B": 0.1, "C": 0.05, "D": 0.05}, "lac": null, "aps": null}
 {"type": "example", "idx": 344, "split": null, "true": "C", "pred": "B", "probs": {"A": 0.05, "B": 0.8, "C": 0.1, "D": 0.05}, "lac": null, "aps": null}
+{"type": "example", "idx": 345, "split": null, "true": "A", "pred": "B", "probs": {"A": 0.3, "B": 0.4, "C": 0.2, "D": 0.1}, "lac": null, "aps": null}
+{"type": "example", "idx": 346, "split": null, "true": "C", "pred": "D", "probs": {"A": 0.1, "B": 0.2, "C": 0.3, "D": 0.4}, "lac": null, "aps": null}
+{"type": "example", "idx": 347, "split": null, "true": "C", "pred": "D", "probs": {"A": 0.2076271186440678, "B": 0.1228813559322034, "C": 0.2923728813559322, "D": 0.3771186440677966}, "lac": null, "aps": null}
+{"type": "example", "idx": 348, "split": null, "true": "C", "pred": "D", "probs": {"A": 0.09375, "B": 0.19791666666666666, "C": 0.3020833333333333, "D": 0.40625}, "lac": null, "aps": null}
+{"type": "example", "idx": 349, "split": null, "true": "B", "pred": "D", "probs": {"A": 0.08208955223880597, "B": 0.19402985074626866, "C": 0.30597014925373134, "D": 0.417910447761194}, "lac": null, "aps": null}
+{"type": "example", "idx": 350, "split": null, "true": "D", "pred": "C", "probs": {"A": 0.1, "B": 0.1, "C": 0.5, "D": 0.3}, "lac": null, "aps": null}
+{"type": "example", "idx": 351, "split": null, "true": "B", "pred": "B", "probs": {"A": 0.1, "B": 0.5, "C": 0.2, "D": 0.2}, "lac": null, "aps": null}
+{"type": "example", "idx": 352, "split": null, "true": "C", "pred": "C", "probs": {"A": 0.1, "B": 0.1, "C": 0.5, "D": 0.3}, "lac": null, "aps": null}
+{"type": "example", "idx": 353, "split": null, "true": "A", "pred": "A", "probs": {"A": 0.5, "B": 0.1, "C": 0.1, "D": 0.3}, "lac": null, "aps": null}
+{"type": "example", "idx": 354, "split": null, "true": "B", "pred": "C", "probs": {"A": 0.1, "B": 0.2, "C": 0.5, "D": 0.2}, "lac": null, "aps": null}
+{"type": "example", "idx": 355, "split": null, "true": "B", "pred": "D", "probs": {"A": 0.1, "B": 0.1, "C": 0.3, "D": 0.5}, "lac": null, "aps": null}
+{"type": "example", "idx": 356, "split": null, "true": "A", "pred": "C", "probs": {"A": 0.1, "B": 0.1, "C": 0.5, "D": 0.3}, "lac": null, "aps": null}
+{"type": "example", "idx": 357, "split": null, "true": "C", "pred": "C", "probs": {"A": 0.1, "B": 0.1, "C": 0.5, "D": 0.3}, "lac": null, "aps": null}
+{"type": "example", "idx": 358, "split": null, "true": "C", "pred": "D", "probs": {"A": 0.1, "B": 0.1, "C": 0.3, "D": 0.5}, "lac": null, "aps": null}
+{"type": "example", "idx": 359, "split": null, "true": "B", "pred": "B", "probs": {"A": 0.1, "B": 0.5, "C": 0.3, "D": 0.1}, "lac": null, "aps": null}
