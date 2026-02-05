@@ -1,10 +1,10 @@
 import torch
-from .selfcheckgpt_prompt import SelfCheckLLMPrompt
+from selfcheckgpt_prompt import SelfCheckLLMPrompt
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 checker = SelfCheckLLMPrompt(
-    model="meta-llama/Llama-2-7b-chat-hf",
+    model="Qwen/Qwen2.5-7B-Instruct",
     device=device
 )
 

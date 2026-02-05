@@ -148,7 +148,7 @@ def main():
         raise ValueError("GEMINI_API_KEY manquante dans le .env")
 
     parser = argparse.ArgumentParser(description="MMLU: LogProbs vs Verbalized Confidence")
-    parser.add_argument("--model", default="gemini-2.0-flash")
+    parser.add_argument("--model", default="models/gemma-3-27b-it")
     parser.add_argument("--subject", default="high_school_mathematics", help="Sujet MMLU")
     parser.add_argument("--limit", type=int, default=10, help="Nombre de questions à traiter")
     parser.add_argument("--batch-size", type=int, default=5, help="Taille des batchs pour la verbalisation")
