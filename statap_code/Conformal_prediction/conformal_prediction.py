@@ -1,203 +1,141 @@
-import numpy as np
+import json
+import math
+import random
+from typing import List, Dict, Any
 
+LABELS = ["A", "B", "C", "D"]
 
-class ConformalPredictor:    
-    """
-    Classe pour la prédiction conforme avec LAC ou APS.
+def load_jsonl(path: str) -> List[Dict[str, Any]]:
+    items = []
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                items.append(json.loads(line))
+    return items
 
-    Attributs:
-        score_fn: Fonction de score conforme ("lac" ou "aps")
-        alpha: Taux d'erreur souhaité (ex: 0.1 pour 90% de couverture)
-        Q_hat: Seuil calculé sur l'ensemble de calibration
-    """
-    def __init__(self, score_fn="lac", alpha=0.1):
-        if score_fn not in ["lac", "aps"]:
-            raise ValueError("score_fn must be 'lac' or 'aps'")
-        self.score_fn = score_fn
-        self.alpha = alpha
-        self.q_hat = None  # Calculé après calibration
+def probs_vector(item: Dict[str, Any]) -> List[float]:
+    p = item["probs_abcd"]
+    # gère None -> 0.0
+    vec = [float(p.get(L, 0.0) or 0.0) for L in LABELS]
+    s = sum(vec)
+    # si jamais ce n’est pas parfaitement normalisé (rare), renormalise
+    if s > 0 and abs(s - 1.0) > 1e-6:
+        vec = [v / s for v in vec]
+    return vec
 
-    def lac_score(self, probs, y):
-        """
-        LAC (Least Ambiguous set-valued Classifier) score.
+def true_label(item: Dict[str, Any]) -> str:
+    return item["solution"]["answer_letter"]
 
-        Args:
-            probs: Vecteur de probabilités de shape (K,) pour K classes
-            y: Index de la classe
+def conformal_quantile(scores: List[float], alpha: float) -> float:
+    n = len(scores)
+    s_sorted = sorted(scores)
+    k = math.ceil((n + 1) * (1 - alpha))  # 1-indexed
+    k = min(max(k, 1), n)
+    return s_sorted[k - 1]
 
-        Returns:
-            Score conforme s(X, Y) = 1 - f(X)_Y
-        """
-        return 1.0 - probs[y]
+# ---------- LAC ----------
+def lac_score(p_vec: List[float], y: str) -> float:
+    py = p_vec[LABELS.index(y)]
+    return 1.0 - py
 
+def lac_predict_set(p_vec: List[float], qhat: float) -> List[str]:
+    thr = 1.0 - qhat
+    C = [L for L, pr in zip(LABELS, p_vec) if pr >= thr]
+    if not C:
+        # fallback: argmax
+        C = [LABELS[max(range(4), key=lambda i: p_vec[i])]]
+    return C
 
-    def aps_score(self, probs, y):
-        """
-        APS (Adaptive Prediction Sets) score.
+# ---------- APS ----------
+def aps_score(p_vec: List[float], y: str) -> float:
+    pairs = sorted(zip(LABELS, p_vec), key=lambda t: t[1], reverse=True)
+    py = p_vec[LABELS.index(y)]
+    cum = 0.0
+    for L, pr in pairs:
+        if pr >= py - 1e-15:  # tol pour égalités/ties flottantes
+            cum += pr
+        else:
+            break
+    return cum
 
-        Args:
-            probs: Vecteur de probabilités de shape (K,) pour K classes
-            y: Index de la classe
+def aps_predict_set(p_vec: List[float], qhat: float) -> List[str]:
+    pairs = sorted(zip(LABELS, p_vec), key=lambda t: t[1], reverse=True)
+    C = []
+    cum = 0.0
+    for L, pr in pairs:
+        cum += pr
+        if cum <= qhat + 1e-15:
+            C.append(L)
+        else:
+            break
+    if not C:
+        C = [pairs[0][0]]  # argmax
+    return C
 
-        Returns:
-            Score conforme s(X, Y) = somme des probas des classes avec proba >= proba de y
-        """
-        threshold = probs[y]
-        return float(np.sum(probs[probs >= threshold]))
+# ---------- Evaluation ----------
+def evaluate(items: List[Dict[str, Any]], alpha: float, method: str, seed: int = 0, cal_frac: float = 0.5):
+    rnd = random.Random(seed)
+    items = items[:]  # copy
+    rnd.shuffle(items)
 
+    n = len(items)
+    n_cal = int(round(n * cal_frac))
+    cal = items[:n_cal]
+    test = items[n_cal:]
 
-    def lac_score_batch(self, probs, y):
-        """
-        LAC score pour un batch d'exemples.
+    # calibration
+    scores = []
+    for it in cal:
+        p = probs_vector(it)
+        y = true_label(it)
+        if method == "lac":
+            scores.append(lac_score(p, y))
+        elif method == "aps":
+            scores.append(aps_score(p, y))
+        else:
+            raise ValueError("method must be 'lac' or 'aps'")
 
-        Args:
-            probs: Matrice de probabilités de shape (n, K)
-            y: Vecteur des classes de shape (n,)
+    qhat = conformal_quantile(scores, alpha)
 
-        Returns:
-            Vecteur des scores de shape (n,)
-        """
-        return 1.0 - probs[np.arange(len(y)), y]
+    # test metrics
+    cover = 0
+    sizes = []
+    top1_acc = 0
 
+    for it in test:
+        p = probs_vector(it)
+        y = true_label(it)
 
-    def aps_score_batch(self, probs, y):
-        """
-        APS score pour un batch d'exemples.
+        pred_top1 = LABELS[max(range(4), key=lambda i: p[i])]
+        top1_acc += (pred_top1 == y)
 
-        Args:
-            probs: Matrice de probabilités de shape (n, K)
-            y: Vecteur des classes de shape (n,)
+        if method == "lac":
+            C = lac_predict_set(p, qhat)
+        else:
+            C = aps_predict_set(p, qhat)
 
-        Returns:
-            Vecteur des scores de shape (n,)
-        """
-        n = len(y)
-        scores = np.zeros(n)
-        for i in range(n):
-            threshold = probs[i, y[i]]
-            scores[i] = np.sum(probs[i, probs[i] >= threshold])
-        return scores
+        sizes.append(len(C))
+        cover += (y in C)
 
+    return {
+        "method": method,
+        "alpha": alpha,
+        "n_cal": len(cal),
+        "n_test": len(test),
+        "qhat": qhat,
+        "coverage": cover / len(test),
+        "avg_set_size": sum(sizes) / len(sizes),
+        "top1_acc": top1_acc / len(test),
+    }
 
-    def compute_quantile(self, scores):
-        """
-        Calcule le seuil q_hat pour la prédiction conforme.
+if __name__ == "__main__":
+    path = "statap_code/Conformal_prediction/logit_mmlu_500_temp0_5.jsonl"
+    items = load_jsonl(path)
 
-        Args:
-            scores: Scores sur l'ensemble de calibration
-            alpha: Taux d'erreur souhaité (ex: 0.1 pour 90% de couverture)
-
-        Returns:
-            Quantile q_hat = quantile((n+1)(1-alpha)/n) des scores
-        """
-        n = len(scores)
-        quantile_level = min(np.ceil((n + 1) * (1 - self.alpha)) / n, 1.0)
-        return float(np.quantile(scores, quantile_level))
-
-
-    def build_prediction_set(self, probs, q_hat):
-        """
-        Construit l'ensemble de prédiction C(X) = {Y' : s(X, Y') <= q_hat}.
-
-        Args:
-            probs: Vecteur de probabilités de shape (K,)
-            q_hat: Seuil calculé sur l'ensemble de calibration
-
-        Returns:
-            Liste des indices des classes dans l'ensemble de prédiction
-        """
-        k = len(probs)
-        prediction_set = []
-
-        score_method = getattr(self, f"{self.score_fn}_score")
-        for y_prime in range(k):
-            if score_method(probs, y_prime) <= q_hat:
-                prediction_set.append(y_prime)
-
-        return prediction_set
-
-###Étapes principales de la conformal prediction##
-
-    def calibrate(self, probs_cal, y_cal):
-        """
-        Étapes 2-3 du PDF : calcule les scores sur D_cal et le seuil q̂.
-
-        Args:
-            probs_cal: Matrice de probabilités de shape (n_cal, K)
-            y_cal: Vecteur des vraies classes de shape (n_cal,)
-
-        Returns:
-            self (pour chaînage)
-        """
-        probs_cal = np.array(probs_cal)
-        y_cal = np.array(y_cal)
-
-        # Calcul des scores sur D_cal
-        score_batch_method = getattr(self, f"{self.score_fn}_score_batch")
-        scores = score_batch_method(probs_cal, y_cal)
-
-        # Calcul du quantile
-        self.q_hat = self.compute_quantile(scores)
-
-        return self
-
-    def predict(self, probs):
-        """
-        Étape 4 du PDF : construit C(X) pour un nouvel exemple.
-
-        Args:
-            probs: Vecteur de probabilités de shape (K,)
-
-        Returns:
-            Liste des indices des classes dans C(X)
-        """
-        if self.q_hat is None:
-            raise ValueError("Calibrer d'abord")
-        return self.build_prediction_set(np.array(probs), self.q_hat)
-
-    def predict_batch(self, probs_test):
-        """
-        Prédit pour plusieurs exemples.
-
-        Args:
-            probs_test: Matrice de probabilités de shape (n_test, K)
-
-        Returns:
-            Liste de listes d'indices
-        """
-        return [self.predict(p) for p in probs_test]
-
-##Métriques d'évaluation##
-
-    def evaluate(self, probs_test, y_test):
-        """
-        Calcule les 3 métriques du PDF : Accuracy, Set Size, Coverage Rate.
-
-        Args:
-            probs_test: Matrice de probabilités de shape (n_test, K)
-            y_test: Vecteur des vraies classes de shape (n_test,)
-
-        Returns:
-            dict avec 'accuracy', 'set_size', 'coverage_rate'
-        """
-        probs_test = np.array(probs_test)
-        y_test = np.array(y_test)
-        n = len(y_test)
-
-        prediction_sets = self.predict_batch(probs_test)
-
-        # Accuracy (Acc) : Y_pred == Y_true (prédiction = classe avec max proba)
-        y_pred = np.argmax(probs_test, axis=1)
-        accuracy = np.mean(y_pred == y_test)
-
-        # Set Size (SS) : taille moyenne des ensembles
-        set_size = np.mean([len(s) for s in prediction_sets])
-
-        # Coverage Rate (CR) : proportion où Y_true ∈ C(X)
-        coverage = np.mean([y_test[i] in prediction_sets[i] for i in range(n)])
-
-        return {
-            'accuracy': accuracy,
-            'set_size': set_size,
-            'coverage_rate': coverage
-        }
+    for alpha in [0.05, 0.1, 0.2]:
+        res_lac = evaluate(items, alpha=alpha, method="lac", seed=0, cal_frac=0.5)
+        res_aps = evaluate(items, alpha=alpha, method="aps", seed=0, cal_frac=0.5)
+        print(res_lac)
+        print(res_aps)
+        print("-" * 60)

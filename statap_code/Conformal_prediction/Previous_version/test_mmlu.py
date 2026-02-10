@@ -37,7 +37,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-from conformal_prediction import ConformalPredictor
+from statap_code.Conformal_prediction.Previous_version.conformal_prediction_tools import ConformalPredictor
 from tqdm import tqdm
 
 
