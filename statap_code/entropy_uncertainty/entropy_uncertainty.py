@@ -5,8 +5,9 @@ def normalize_probs(probs, axis=-1, eps=1e-12):
     p = np.asarray(probs, dtype=float)
     s = p.sum(axis=axis, keepdims=True)
     k = p.shape[axis]
-    uniform = np.full_like(p, 1.0 / k)
-    return np.where(s > eps, p / s, uniform)
+    out = np.full_like(p, 1.0 / k)
+    np.divide(p, s, out=out, where=s > eps)
+    return out
 
 
 def entropy(probs, axis=-1, eps=1e-12, base=None):
