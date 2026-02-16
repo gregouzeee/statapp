@@ -277,10 +277,10 @@ def plot_unified_comparison():
             marker="D", markersize=5, linewidth=2,
             color="#E91E63", linestyle="--", label="Confiance déclarée")
 
-    # Conformal LAC — coverage empirique vs accuracy (= coverage car on mesure si y ∈ C)
-    ax.plot(df_conf["coverage"], 1 - df_conf["alpha"],
-            marker="^", markersize=5, linewidth=2,
-            color="#FF6F00", linestyle="-.", label="Conformal LAC (couv. emp. vs target)")
+    # # Conformal LAC — coverage empirique vs accuracy (= coverage car on mesure si y ∈ C)
+    # ax.plot(df_conf["coverage"], 1 - df_conf["alpha"],
+    #         marker="^", markersize=5, linewidth=2,
+    #         color="#FF6F00", linestyle="-.", label="Conformal LAC (couv. emp. vs target)")
 
     ax.set_xlabel("Couverture / Fraction retenue")
     ax.set_ylabel("Accuracy / Target")
@@ -517,20 +517,20 @@ def main():
     conformal_df = run_conformal_on_paired()
     figures.append(OUT_DIR / "fig2_conformal_prediction.png")
 
-    print("\n[3] Comparaison unifiée des 3 approches...")
-    figures.append(plot_unified_comparison())
+    # print("\n[3] Comparaison unifiée des 3 approches...")
+    # figures.append(plot_unified_comparison())
 
-    print("\n[4] Distribution des scores de confiance...")
+    print("\n[3] Distribution des scores de confiance...")
     figures.append(plot_confidence_distributions())
 
-    print("\n[5] Scatter logprob vs déclarée...")
+    print("\n[4] Scatter logprob vs déclarée...")
     figures.append(plot_logprob_vs_declared())
 
-    print("\n[6] Tableau récapitulatif...")
+    print("\n[5] Tableau récapitulatif...")
     table = build_summary_table()
     print(table.to_string(index=False))
 
-    print("\n[7] Génération du PDF...")
+    print("\n[6] Génération du PDF...")
     generate_pdf(figures, table, conformal_df)
 
     print("\n" + "=" * 60)

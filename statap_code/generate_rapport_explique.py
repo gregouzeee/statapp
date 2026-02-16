@@ -94,44 +94,8 @@ couverture mais au prix d'ensembles plus grands. Sur seulement 107 \
 questions (54 de calibration), les résultats sont bruités."""
     ),
     (
-        OUT_DIR / "fig3_unified_comparison.png",
-        "Figure 3 — Comparaison unifiée des 3 approches",
-        """\
-Ce graphe met sur le même repère les 3 familles de méthodes, même si \
-elles ne mesurent pas exactement la même chose. L'objectif est de donner \
-une vue d'ensemble.
-
-Axe X — Couverture / Fraction retenue.
-• Pour entropie et pmax : c'est la fraction des 107 questions retenues \
-(triées par confiance décroissante).
-• Pour conformal LAC : c'est la couverture empirique, i.e. P(y ∈ ensemble).
-
-Axe Y — Accuracy / Target.
-• Pour entropie et pmax : c'est l'accuracy des questions retenues.
-• Pour conformal LAC : c'est le target 1−α correspondant.
-
-Courbes :
-• Entropie logprobs [bleu] et Prob. max logprobs [vert] : accuracy \
-en fonction de la couverture (mêmes courbes que fig. 1, traits pleins).
-• Confiance déclarée [rose] : accuracy en fonction de la couverture.
-• Conformal LAC [orange, point-tiret] : pour chaque α de 0.01 à 0.50, \
-on trace (couverture empirique, 1−α). Si la méthode est bien calibrée, \
-les points devraient être au-dessus de la diagonale.
-
-Interprétation. Les courbes logprobs (bleu/vert) dominent nettement la \
-confiance déclarée (rose) à toutes les couvertures. La courbe conformal \
-LAC monte en couverture vers la droite (les grands α donnent de petits \
-ensembles, donc une couverture plus faible). On voit que la conformal \
-prediction couvre bien quand on lui demande (couverture ≥ target pour \
-la plupart des points).
-
-Attention : les axes ne mesurent pas exactement la même chose pour les \
-3 méthodes. Ce graphe est illustratif, pas une comparaison rigoureuse \
-sur le même critère."""
-    ),
-    (
         OUT_DIR / "fig4_confidence_distributions.png",
-        "Figure 4 — Distribution des scores : correctes vs incorrectes",
+        "Figure 3 — Distribution des scores : correctes vs incorrectes",
         """\
 4 histogrammes montrant, pour chaque signal de confiance, comment les \
 scores se distribuent selon que la prédiction est correcte (vert) ou \
@@ -170,7 +134,7 @@ fondamentale de la supériorité des logprobs sur la figure 1."""
     ),
     (
         OUT_DIR / "fig5_logprob_vs_declared.png",
-        "Figure 5 — Scatter : confiance logprobs vs confiance déclarée",
+        "Figure 4 — Scatter : confiance logprobs vs confiance déclarée",
         """\
 Chaque point représente une des 107 questions. On compare, question par \
 question, le score de confiance issu des logprobs (axe Y) à celui issu \
