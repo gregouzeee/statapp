@@ -41,6 +41,11 @@ class FraudIDClassifier:
             self.model = getattr(models, model_name)(pretrained=pretrained)
             # Modify final layer
             self.model.fc = nn.Linear(self.model.fc.in_features, num_classes)
+        elif model_name.startswith("mobilenet"):
+            # mobilenet_v2 has classifier[1] as linear layer
+            self.model = getattr(models, model_name)(pretrained=pretrained)
+            in_features = self.model.classifier[1].in_features if hasattr(self.model.classifier[1], 'in_features') else getattr(self.model.classifier[1], 'in_channels', None)
+            self.model.classifier[1] = nn.Linear(in_features, num_classes)
         else:
             raise ValueError(f"Unknown model: {model_name}")
         
