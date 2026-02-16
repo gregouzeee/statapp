@@ -1,14 +1,15 @@
 import torch
-from selfcheckgpt_prompt import SelfCheckLLMPrompt
+from statap_code.selfcheckgpt_prompt import SelfCheckLLMPrompt
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# Use a small model for the example to keep runtime reasonable
 checker = SelfCheckLLMPrompt(
-    model="Qwen/Qwen2.5-7B-Instruct",
+    model="gpt2",
     device=device
 )
 
-## il faudra construire le code pour échantillonner ?
+## example sentences and sampled passages
 sentences = [
     "Albert Einstein was born in Germany.",
     "Albert Einstein was born in France.",
@@ -21,10 +22,26 @@ sampled_passages = [
 ]
 
 
+print("Running prompt-based predict() (Yes/No mapping)...")
 scores = checker.predict(
     sentences=sentences,
     sampled_passages=sampled_passages,
-    verbose=True
+    verbose=False
 )
+print("predict() scores:", scores)
 
-print(scores)
+print("\nRunning token-level predict_perplexity() (avg log-prob per token)...")
+pp_scores = checker.predict_perplexity(
+    sentences=sentences,
+    sampled_passages=sampled_passages,
+    return_mode="avg_logprob"
+)
+print("predict_perplexity() avg log-prob scores:", pp_scores)
+
+print("\nRunning predict_perplexity() with sum_logprob (longer sentences get larger magnitude)...")
+pp_sum_scores = checker.predict_perplexity(
+    sentences=sentences,
+    sampled_passages=sampled_passages,
+    return_mode="sum_logprob"
+)
+print("predict_perplexity() sum log-prob scores:", pp_sum_scores)
