@@ -1,0 +1,802 @@
+[
+  {
+    "id": 0,
+    "subject": "abstract_algebra",
+    "question": "Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q.",
+    "options": {
+      "A": "0",
+      "B": "4",
+      "C": "2",
+      "D": "6"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 1,
+    "subject": "abstract_algebra",
+    "question": "Let p = (1, 2, 5, 4)(2, 3) in S_5 . Find the index of <p> in S_5.",
+    "options": {
+      "A": "8",
+      "B": "2",
+      "C": "24",
+      "D": "120"
+    },
+    "true_answer": "C",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 2,
+    "subject": "abstract_algebra",
+    "question": "Find all zeros in the indicated finite field of the given polynomial with coefficients in that field. x^5 + 3x^3 + x^2 + 2x in Z_5",
+    "options": {
+      "A": "0",
+      "B": "1",
+      "C": "0,1",
+      "D": "0,4"
+    },
+    "true_answer": "D",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 3,
+    "subject": "abstract_algebra",
+    "question": "Statement 1 | A factor group of a non-Abelian group is non-Abelian. Statement 2 | If K is a normal subgroup of H and H is a normal subgroup of G, then K is a normal subgroup of G.",
+    "options": {
+      "A": "True, True",
+      "B": "False, False",
+      "C": "True, False",
+      "D": "False, True"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 4,
+    "subject": "abstract_algebra",
+    "question": "Find the product of the given polynomials in the given polynomial ring. f(x) = 4x - 5, g(x) = 2x^2 - 4x + 2 in Z_8[x].",
+    "options": {
+      "A": "2x^2 + 5",
+      "B": "6x^2 + 4x + 6",
+      "C": "0",
+      "D": "x^2 + 1"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 5,
+    "subject": "abstract_algebra",
+    "question": "Statement 1 | If a group has an element of order 15 it must have at least 8 elements of order 15. Statement 2 | If a group has more than 8 elements of order 15, it must have at least 16 elements of order 15.",
+    "options": {
+      "A": "True, True",
+      "B": "False, False",
+      "C": "True, False",
+      "D": "False, True"
+    },
+    "true_answer": "A",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 6,
+    "subject": "abstract_algebra",
+    "question": "Statement 1 | Every homomorphic image of a group G is isomorphic to a factor group of G. Statement 2 | The homomorphic images of a group G are the same (up to isomorphism) as the factor groups of G.",
+    "options": {
+      "A": "True, True",
+      "B": "False, False",
+      "C": "True, False",
+      "D": "False, True"
+    },
+    "true_answer": "A",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 7,
+    "subject": "abstract_algebra",
+    "question": "Statement 1 | A ring homomorphism is one to one if and only if the kernel is {0}. Statement 2 | Q is an ideal in R.",
+    "options": {
+      "A": "True, True",
+      "B": "False, False",
+      "C": "True, False",
+      "D": "False, True"
+    },
+    "true_answer": "D",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 8,
+    "subject": "abstract_algebra",
+    "question": "Find the degree for the given field extension Q(sqrt(2) + sqrt(3)) over Q.",
+    "options": {
+      "A": "0",
+      "B": "4",
+      "C": "2",
+      "D": "6"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 9,
+    "subject": "abstract_algebra",
+    "question": "Find all zeros in the indicated finite field of the given polynomial with coefficients in that field. x^3 + 2x + 2 in Z_7",
+    "options": {
+      "A": "1",
+      "B": "2",
+      "C": "2,3",
+      "D": "6"
+    },
+    "true_answer": "C",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 10,
+    "subject": "anatomy",
+    "question": "A lesion causing compression of the facial nerve at the stylomastoid foramen will cause ipsilateral",
+    "options": {
+      "A": "paralysis of the facial muscles.",
+      "B": "paralysis of the facial muscles and loss of taste.",
+      "C": "paralysis of the facial muscles, loss of taste and lacrimation.",
+      "D": "paralysis of the facial muscles, loss of taste, lacrimation and decreased salivation."
+    },
+    "true_answer": "A",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 11,
+    "subject": "anatomy",
+    "question": "A \"dished face\" profile is often associated with",
+    "options": {
+      "A": "a protruding mandible due to reactivation of the condylar cartilage by acromegaly.",
+      "B": "a recessive maxilla due to failure of elongation of the cranial base.",
+      "C": "an enlarged frontal bone due to hydrocephaly.",
+      "D": "defective development of the maxillary air sinus."
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 12,
+    "subject": "anatomy",
+    "question": "Which of the following best describes the structure that collects urine in the body?",
+    "options": {
+      "A": "Bladder",
+      "B": "Kidney",
+      "C": "Ureter",
+      "D": "Urethra"
+    },
+    "true_answer": "A",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 13,
+    "subject": "anatomy",
+    "question": "Which of the following structures is derived from ectomesenchyme?",
+    "options": {
+      "A": "Motor neurons",
+      "B": "Skeletal muscles",
+      "C": "Melanocytes",
+      "D": "Sweat glands"
+    },
+    "true_answer": "C",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 14,
+    "subject": "anatomy",
+    "question": "Which of the following describes the cluster of blood capillaries found in each nephron in the kidney?",
+    "options": {
+      "A": "Afferent arteriole",
+      "B": "Glomerulus",
+      "C": "Loop of Henle",
+      "D": "Renal pelvis"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 15,
+    "subject": "anatomy",
+    "question": "A patient suffers a broken neck with damage to the spinal cord at the level of the sixth cervical vertebra.",
+    "options": {
+      "A": "They will be unable to breathe without life support.",
+      "B": "They will only be able to breathe quietly.",
+      "C": "It is impossible to predict an effect on breathing.",
+      "D": "Breathing will be unaffected."
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 16,
+    "subject": "anatomy",
+    "question": "Which of the following anatomical regions of abdomen lies just distal to the sternum?",
+    "options": {
+      "A": "Epigastric",
+      "B": "Hypochondriac",
+      "C": "Hypogastric",
+      "D": "Lumbar"
+    },
+    "true_answer": "A",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 17,
+    "subject": "anatomy",
+    "question": "Which of the following best describes the human body's defense mechanism against environmental bacteria?",
+    "options": {
+      "A": "Hair in the nose",
+      "B": "Mucous membranes",
+      "C": "Osteoblasts",
+      "D": "Saliva"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 18,
+    "subject": "anatomy",
+    "question": "The palatine processes begin to fuse at",
+    "options": {
+      "A": "six weeks post-fertilization.",
+      "B": "eight weeks post-fertilization.",
+      "C": "ten weeks post-fertilization.",
+      "D": "twelve weeks post-fertilization."
+    },
+    "true_answer": "C",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 19,
+    "subject": "anatomy",
+    "question": "Primary motor cortex activity results in",
+    "options": {
+      "A": "bilateral contraction of antigravity limb muscles.",
+      "B": "bilateral contraction of limb musculature.",
+      "C": "contraction of ipsilateral limb musculature.",
+      "D": "contraction of contralateral limb musculature."
+    },
+    "true_answer": "D",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 20,
+    "subject": "astronomy",
+    "question": "What is true for a type-Ia (\"type one-a\") supernova?",
+    "options": {
+      "A": "This type occurs in binary systems.",
+      "B": "This type occurs in young galaxies.",
+      "C": "This type produces gamma-ray bursts.",
+      "D": "This type produces high amounts of X-rays."
+    },
+    "true_answer": "A",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 21,
+    "subject": "astronomy",
+    "question": "If you know both the actual brightness of an object and its apparent brightness from your location then with no other information you can estimate:",
+    "options": {
+      "A": "Its speed relative to you",
+      "B": "Its composition",
+      "C": "Its size",
+      "D": "Its distance from you"
+    },
+    "true_answer": "D",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 22,
+    "subject": "astronomy",
+    "question": "Why is the sky blue?",
+    "options": {
+      "A": "Because the molecules that compose the Earth's atmosphere have a blue-ish color.",
+      "B": "Because the sky reflects the color of the Earth's oceans.",
+      "C": "Because the atmosphere preferentially scatters short wavelengths.",
+      "D": "Because the Earth's atmosphere preferentially absorbs all other colors."
+    },
+    "true_answer": "C",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 23,
+    "subject": "astronomy",
+    "question": "You’ve made a scientific theory that there is an attractive force between all objects. When will your theory be proven to be correct?",
+    "options": {
+      "A": "The first time you drop a bowling ball and it falls to the ground proving your hypothesis.",
+      "B": "After you’ve repeated your experiment many times.",
+      "C": "You can never prove your theory to be correct only “yet to be proven wrong”.",
+      "D": "When you and many others have tested the hypothesis."
+    },
+    "true_answer": "C",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 24,
+    "subject": "astronomy",
+    "question": "Which of the following is/are true?",
+    "options": {
+      "A": "Titan is the only outer solar system moon with a thick atmosphere",
+      "B": "Titan is the only outer solar system moon with evidence for recent geologic activity",
+      "C": "Titan's atmosphere is composed mostly of hydrocarbons",
+      "D": "A and D"
+    },
+    "true_answer": "D",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 25,
+    "subject": "astronomy",
+    "question": "A comet of mass m impacts the earth (mass M radius R) at the minimum impact speed. What is the expression for the total energy released in the impact?",
+    "options": {
+      "A": "m*v",
+      "B": "0.5*m/(R^3)",
+      "C": "0.5*m*(2GM/R)",
+      "D": "0.6*G(M^2)/R"
+    },
+    "true_answer": "C",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 26,
+    "subject": "astronomy",
+    "question": "Some of Mars'water is frozen in the soil and the ice caps and some was lost due to solar wind stripping but much of the original water is thought to have been lost through another mechanism. What happened to this \"lost\"water?",
+    "options": {
+      "A": "it was stripped away by the magnetic field when it rapidly decreased in strength",
+      "B": "it was broken into hydrogen and oxygen by ultraviolet light and the hydrogen was lost through thermal escape",
+      "C": "it was consumed by a civilization of thirsty Martians",
+      "D": "it was vaporized during a period of intense volcanism and was lost to space through thermal escape"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 27,
+    "subject": "astronomy",
+    "question": "Most rocks on the Moon's surface are older than those on the Earth's surface. The best evidence for this is:",
+    "options": {
+      "A": "Lunar rocks are composed of fragments pulverized by many impacts.",
+      "B": "Radioactive dating of lunar samples shows that they are older.",
+      "C": "The Moon's surface is more heavily eroded than the Earth's surface.",
+      "D": "The Moon's surface has more impact craters than the Earth's surface."
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 28,
+    "subject": "astronomy",
+    "question": "What is the second most common element in the solar system?",
+    "options": {
+      "A": "Iron",
+      "B": "Hydrogen",
+      "C": "Methane",
+      "D": "Helium"
+    },
+    "true_answer": "D",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 29,
+    "subject": "astronomy",
+    "question": "What is the source of the material that causes meteor showers?",
+    "options": {
+      "A": "Near-Earth asteroids gradually disintegrate and spread out along their orbital path. When the Earth passes through the orbit of an asteroid we are bombarded by sand-sized particles which cause a meteor shower.",
+      "B": "Near-Earth asteroids disintegrate as they enter Earth's atmosphere creating hundreds of bright meteors that appear to radiate from a single location in the sky.",
+      "C": "The nuclei of comets disintigrate as they enter Earth's atmosphere creating hundreds of bright meteors that appear to radiate from a central location in the sky.",
+      "D": "The nuclei of comets gradually disintegrate and spread out along the comet's orbital path. When the Earth passes through the orbit of a comet we are bombarded by sand-sized particles which cause a meteor shower."
+    },
+    "true_answer": "D",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 30,
+    "subject": "business_ethics",
+    "question": "_______ such as bitcoin are becoming increasingly mainstream and have a whole host of associated ethical implications, for example, they are______ and more ______. However, they have also been used to engage in _______.",
+    "options": {
+      "A": "Cryptocurrencies, Expensive, Secure, Financial Crime",
+      "B": "Traditional currency, Cheap, Unsecure, Charitable giving",
+      "C": "Cryptocurrencies, Cheap, Secure, Financial crime",
+      "D": "Traditional currency, Expensive, Unsecure, Charitable giving"
+    },
+    "true_answer": "C",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 31,
+    "subject": "business_ethics",
+    "question": "Typical advertising regulatory bodies suggest, for example that adverts must not: encourage _________, cause unnecessary ________ or _____, and must not cause _______ offence.",
+    "options": {
+      "A": "Unsafe practices, Wants, Fear, Trivial",
+      "B": "Unsafe practices, Distress, Fear, Serious",
+      "C": "Safe practices, Wants, Jealousy, Trivial",
+      "D": "Safe practices, Distress, Jealousy, Serious"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 32,
+    "subject": "business_ethics",
+    "question": "______ are the obligations of workers towards their employer, based on individual contracts and wider employment laws.",
+    "options": {
+      "A": "Employee rights",
+      "B": "Employee rights",
+      "C": "Employer duties",
+      "D": "Employee duties"
+    },
+    "true_answer": "D",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 33,
+    "subject": "business_ethics",
+    "question": " ______ is an employee's preferred ratio between work-related and non-work-related activities which, due to intensification of work and technological shifts, has become a hotly contested issue in recent years.",
+    "options": {
+      "A": "Presenteeism",
+      "B": "Absenteeism",
+      "C": "Work-play balance",
+      "D": "Work-life balance"
+    },
+    "true_answer": "D",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 34,
+    "subject": "business_ethics",
+    "question": " _______ can be a likened to their natural counterparts, comprising of a balanced network of interdependent organisms and their environments thus adding value to sustainability thinking due to the consideration of companies and industries as being bound together, and interdependent due to all kinds of resources and wastes.",
+    "options": {
+      "A": "Industrial supply loops",
+      "B": "Industrial ecosystems",
+      "C": "Ecological ecosystems",
+      "D": "Corporate ecosystems"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 35,
+    "subject": "business_ethics",
+    "question": "________, where for example one party possess more resources, unfair distribution of ________, where one party gains more from the relationship, and CSOs being ________, are all limitations and risks of business-CSO collaborations.",
+    "options": {
+      "A": "Power imbalance, Benefits, Hoodwinked",
+      "B": "Power imbalance, Resources, Co-opted",
+      "C": "Informational asymmetries, Benefits, Hoodwinked",
+      "D": "Informational asymmetries, Resources, Co-opted"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 36,
+    "subject": "business_ethics",
+    "question": "Although corporate profit maximization is not directly prescribed by major normative theories to which normative theory is it most similar?",
+    "options": {
+      "A": "hedonistic utilitarianism",
+      "B": "preference utilitarianism",
+      "C": "The Categorical Imperative",
+      "D": "ethics of care"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 37,
+    "subject": "business_ethics",
+    "question": "What does Milton Friedman believe to be the sole responsibility of business?",
+    "options": {
+      "A": "The only social responsibility of business is to its shareholders",
+      "B": "Managers should act in ways that balance the interest of society and shareholders",
+      "C": "The primary responsibility organizations have is to its employees",
+      "D": "The primary responsibility organizations have is to its stakeholders"
+    },
+    "true_answer": "A",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 38,
+    "subject": "business_ethics",
+    "question": "______ regulation goes further than the ______ that CSOs have with businesses, as it also concerns _______of such processes.",
+    "options": {
+      "A": "Legal, Interactions, Mechanics",
+      "B": "Civil, Relations, Outcomes",
+      "C": "Political, Interactions, Outcomes",
+      "D": "Environmental, Relations, Mechanics"
+    },
+    "true_answer": "B",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  },
+  {
+    "id": 39,
+    "subject": "business_ethics",
+    "question": "_______ working practices refer to working patterns which involve temporal, spatial and task related fluidity.",
+    "options": {
+      "A": "Dynamic",
+      "B": "Fluid",
+      "C": "Flexible",
+      "D": "Modern"
+    },
+    "true_answer": "C",
+    "verbalized_confidence": {
+      "A": 0,
+      "B": 0,
+      "C": 0,
+      "D": 0
+    },
+    "predicted_answer": "A",
+    "max_confidence": 0
+  }
+]

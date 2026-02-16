@@ -1,0 +1,6 @@
+Source,Signal,Acc. globale,Acc. top 50%,Acc. top 10%
+Logprobs,Entropie,62.6%,75.9%,81.8%
+Logprobs,Prob. max,62.6%,75.9%,81.8%
+Déclarée,Entropie,44.9%,48.1%,72.7%
+Déclarée,Prob. max,44.9%,50.0%,72.7%
+Déclarée,Conf. brute,44.9%,51.9%,72.7%
