@@ -40,7 +40,7 @@ RESUME = True
 IMPORTANCE_TOP_K = 3      # how many "important" tokens to keep for comparison
 
 IN_DATASET = "trivia_qa"  # HuggingFace dataset name
-OUT_JSONL = "statap_code/triviaqa_uncertainty/triviaqa_results.jsonl"
+OUT_JSONL = "statap_code/text_uncertainty/triviaqa_uncertainty/triviaqa_results.jsonl"
 
 
 # ──────────────────────────── Prompt ────────────────────────────
