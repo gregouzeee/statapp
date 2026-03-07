@@ -1,5 +1,4 @@
 \documentclass[a4paper, 11pt]{article}
-
 % ── Packages ──────────────────────────────────────────────────────────────────
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -13,52 +12,38 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{float}
-
 \geometry{margin=2.5cm}
 \hypersetup{colorlinks=true, linkcolor=blue!60!black, citecolor=blue!60!black, urlcolor=blue!60!black}
-
 \title{\textbf{Note d'étape 2 -- StatApp}\\
 \large Incertitude des Large Language Models}
 \author{ENSAE Paris -- Société Générale}
 \date{9 mars 2026}
-
 \begin{document}
 \maketitle
-
 % =============================================================================
 \section{Rappel du contexte et objectifs}
 % =============================================================================
-
 Les Large Language Models (LLMs) génèrent des réponses textuelles fluides mais sans indication de leur degré de confiance. Notre projet, encadré par la Société Générale, vise à implémenter et évaluer différentes méthodes de quantification de l'incertitude des LLMs, en distinguant les approches \emph{white-box} (accès aux probabilités internes) des approches \emph{black-box} (sans accès aux logits). Depuis la première note d'étape (décembre 2025), nous avons considérablement élargi le périmètre du projet : nouveaux datasets, nouvelles méthodes, extension à la vision, et premiers résultats comparatifs.
-
 % =============================================================================
 \section{Travail réalisé depuis la note d'étape 1}
 % =============================================================================
-
 \subsection{Extension des datasets}
-
 Nous avons enrichi notre base d'évaluation au-delà de MMLU et GSM8K avec trois nouveaux datasets :
-
 \begin{itemize}[nosep]
     \item \textbf{ELI5} (\emph{Explain Like I'm 5}) : questions ouvertes nécessitant des réponses longues explicatives. Ce dataset permet d'évaluer l'incertitude sur des générations en texte libre, contrairement aux QCM.
     \item \textbf{TriviaQA} : questions factuelles avec réponses courtes et vérités terrain multiples. Idéal pour mesurer si les tokens les plus incertains correspondent aux éléments informatifs de la réponse.
-    \item \textbf{EST} (fraud ID detection) : $\sim$41\,800 images de pièces d'identité réparties en 7 classes (1 classe positive + 6 types de fraude). Extension du projet à la \emph{vision}.
+    \item \textbf{MIDV2020} : un dataset contenant différents documents d'identité provenant de différents pays, une ouverture à la classification d'images.
 \end{itemize}
-
 \subsection{Nouvelles méthodes implémentées}
-
 Au-delà des méthodes white-box (log-probabilités) et SelfCheckGPT implémentées lors de la première phase, nous avons développé quatre nouvelles approches :
-
 \paragraph{Entropie sémantique (Kuhn et al., 2023).}
 Pour chaque question, nous générons $K=5$ réponses avec température élevée ($T=1{,}0$) et log-probabilités. Un modèle NLI (Gemini~2.5 Flash) regroupe les réponses sémantiquement équivalentes via un algorithme Union-Find. L'entropie sémantique est ensuite calculée comme l'entropie de Shannon sur les probabilités des clusters :
 \begin{equation}
     \text{SE} = -\sum_{c} P(C_c) \log P(C_c), \quad P(C_c) = \frac{\sum_{r \in C_c} \exp(\bar{\ell}_r)}{\sum_{c'} \sum_{r \in C_{c'}} \exp(\bar{\ell}_r)}
 \end{equation}
-où $\bar{\ell}_r$ désigne la log-probabilité moyenne (normalisée par la longueur) de la réponse $r$. Une entropie sémantique nulle indique que toutes les réponses sont équivalentes (haute confiance), tandis qu'une valeur élevée signale des réponses sémantiquement divergentes.
-
+ou where $\bar{\ell}_r$ désigne la log-probabilité moyenne (normalisée par la longueur) de la réponse $r$. Une entropie sémantique nulle indique que toutes les réponses sont équivalentes (haute confiance), tandis qu'une valeur élevée signale des réponses sémantiquement divergentes.
 \paragraph{Prédiction conforme (LAC et APS).}
 Nous avons implémenté deux méthodes de prédiction conforme sur MMLU : \emph{Least Ambiguous set-valued Classifier} (LAC) et \emph{Adaptive Prediction Sets} (APS). Pour un taux d'erreur nominal $\alpha$, ces méthodes construisent des ensembles de prédiction $C(X_t)$ garantissant $P(Y_t \in C(X_t)) \geq 1-\alpha$. Le protocole divise les données en deux (50\% calibration, 50\% test), calcule un quantile $\hat{q}$ sur les scores de non-conformité, puis construit les ensembles sur le jeu de test.
-
 \paragraph{Importance des tokens par perplexité et similarité cosinus.}
 Sur TriviaQA, nous avons développé deux méthodes d'attribution d'importance aux tokens :
 \begin{itemize}[nosep]
@@ -66,70 +51,45 @@ Sur TriviaQA, nous avons développé deux méthodes d'attribution d'importance a
     \item \emph{Cosine importance} : $\text{imp}(t) = 1 - \cos(\vec{v}_{\text{full}}, \vec{v}_{\setminus t})$, où $\vec{v}$ est le vecteur moyen des distributions top-$k$ sur toutes les positions. Les tokens dont le retrait modifie le plus le profil global sont les plus importants.
 \end{itemize}
 Ces méthodes sont évaluées aux niveaux token et mot, avec comparaison aux vérités terrain.
-
 \paragraph{Pipeline de classification d'images avec incertitude.}
-Pour le cas d'usage vision (détection de fraude sur pièces d'identité), nous avons implémenté trois méthodes d'incertitude sur les logits de réseaux ResNet pré-entraînés : entropie de Shannon sur la distribution softmax, perplexité adaptée (log-probabilité de la classe prédite), et prédiction conforme avec garantie de couverture.
-
+Pour le cas d'usage vision (classification sur documents d'identité), nous avons implémenté trois méthodes d'incertitude sur les logits de réseaux ResNet pré-entraînés : entropie de Shannon sur la distribution softmax, perplexité adaptée (log-probabilité de la classe prédite), et prédiction conforme avec garantie de couverture.
 % =============================================================================
 \section{Méthodologie}
 % =============================================================================
-
 \subsection{Cadre expérimental commun}
-
 Toutes les expériences textuelles utilisent Gemini~2.0 Flash via l'API Vertex AI avec \texttt{response\_logprobs=True}. Pour les évaluations nécessitant un juge LLM (SelfCheckGPT, évaluation de justesse), nous utilisons Gemini~2.5 Flash. Le code est structuré en modules Python avec résultats sauvegardés en JSONL pour permettre la reprise après interruption.
-
 \subsection{Méthodes white-box : signaux de confiance}
-
 Nous comparons plusieurs signaux extraits des log-probabilités :
-
 \begin{itemize}[nosep]
     \item \textbf{Entropie normalisée} ($c_\text{ent}$) : $H_\text{norm} = -\frac{1}{\log K}\sum_{k} p_k \log p_k$ sur les probabilités des options A/B/C/D. Confiance $= 1 - H_\text{norm}$.
     \item \textbf{Probabilité maximale} ($c_\text{pmax}$) : $\max_k p_k$, la probabilité de l'option la plus probable.
     \item \textbf{Confiance déclarée} ($c_\text{decl}$) : le modèle verbalise lui-même un score de confiance entre 0 et 1.
     \item \textbf{Perplexité de séquence} : $\text{PPL} = \exp\left(-\frac{1}{N}\sum_i \log p(t_i | t_{<i})\right)$ sur la réponse complète.
 \end{itemize}
-
 \subsection{Méthodes black-box}
-
 \begin{itemize}[nosep]
     \item \textbf{SelfCheckGPT} : pour chaque phrase de la réponse, un juge LLM vérifie sa cohérence avec $K$ passages alternatifs générés pour la même question. Score $\in [0,1]$ : 0 = fiable, 1 = contredit.
     \item \textbf{Entropie sémantique} : mesure la diversité sémantique des réponses échantillonnées (cf. section précédente).
 \end{itemize}
-
 \subsection{Évaluation des méthodes}
-
 Pour comparer les signaux de confiance, nous utilisons des courbes \emph{accuracy vs coverage} : en ne retenant que les réponses les plus confiantes (par un signal donné), l'accuracy devrait augmenter si le signal est discriminant. Nous mesurons également : le score de Brier, l'ECE (\emph{Expected Calibration Error}), l'AUROC et l'AUPRC.
-
 % =============================================================================
 \section{Statistiques descriptives}
 % =============================================================================
-
 \subsection{MMLU (approfondissement)}
-
 Nous avons approfondi l'analyse du dataset MMLU présentée dans la note 1. Les 15\,858 questions couvrent 57~sujets, avec un déséquilibre notable (de $\sim$100 à $>$1\,000 questions par sujet). Le biais de position des réponses correctes (26,7\% en D, $p < 0{,}001$ au test $\chi^2$) nous a conduits à appliquer un \emph{shuffle} systématique des choix, rendant la distribution statistiquement uniforme ($p = 0{,}16$).
-
 Pour l'évaluation comparative des méthodes d'incertitude, nous travaillons sur un sous-ensemble de 107 questions disposant de logits complets A/B/C/D et de confiance déclarée, permettant une comparaison appariée stricte.
-
 \subsection{ELI5}
-
 100 questions ELI5 traitées par Gemini~2.0 Flash produisent des réponses de 3 à 5~phrases. La perplexité par phrase ($\text{PPL} = \exp(-\bar{\ell})$) et l'entropie top-$k$ (entropie de Shannon sur les 5 candidats les plus probables à chaque position) sont calculées pour chaque phrase. Un juge LLM évalue ensuite la qualité (accuracy, simplicité, pertinence sur une échelle de 1 à 5).
-
 \subsection{TriviaQA}
-
 100 questions TriviaQA avec réponses courtes. Le modèle atteint un taux de justesse évalué à la fois par correspondance de sous-chaîne et par un juge LLM strict. L'analyse porte sur la comparaison entre les tokens identifiés comme importants par nos méthodes et les tokens de la réponse correcte.
-
 % =============================================================================
 \section{Premiers résultats}
 % =============================================================================
-
 \subsection{Comparaison des signaux de confiance sur MMLU}
-
 Sur les 107 questions appariées, nous comparons les courbes accuracy-coverage des différents signaux. Les résultats montrent que les signaux basés sur les log-probabilités (entropie, probabilité maximale) surpassent la confiance déclarée par le modèle. En sélectionnant les 50\% de questions les plus confiantes, l'accuracy augmente significativement par rapport à la baseline.
-
 La prédiction conforme (LAC et APS) fournit des garanties de couverture respectées empiriquement : pour $\alpha = 0{,}1$, la couverture empirique dépasse $1-\alpha = 0{,}9$ avec une taille moyenne d'ensemble raisonnable.
-
 \subsection{Incertitude sur les réponses longues (ELI5)}
-
 L'analyse sur ELI5 révèle plusieurs résultats :
 \begin{itemize}[nosep]
     \item L'entropie sémantique discrimine les bonnes réponses : les questions avec $\text{SE} = 0$ (toutes les réponses sémantiquement équivalentes) ont une accuracy moyenne plus élevée.
@@ -137,29 +97,19 @@ L'analyse sur ELI5 révèle plusieurs résultats :
     \item La combinaison SE + SelfCheck améliore la discrimination : les questions avec SE élevée ET SelfCheck élevé ont les pires scores d'accuracy.
     \item Les courbes accuracy-coverage montrent que le signal combiné (moyenne des confiances normalisées) est plus performant que chaque signal individuel.
 \end{itemize}
-
 \subsection{Importance des tokens sur TriviaQA}
-
 Les méthodes d'importance des tokens montrent que la perplexité et la similarité cosinus identifient différemment les tokens critiques. L'évaluation par un juge LLM permet de raffiner les taux de correspondance (\emph{hit rates}) par rapport à la simple correspondance de sous-chaîne, en gérant les variations orthographiques. La perplexité des réponses incorrectes est en moyenne plus élevée que celle des réponses correctes, confirmant que l'incertitude au niveau des tokens est un signal discriminant.
-
 % =============================================================================
 \section{Perspectives pour le mémoire final}
 % =============================================================================
-
 La suite du projet s'articulera autour de trois axes :
-
 \begin{enumerate}[nosep]
     \item \textbf{Consolidation des résultats quantitatifs.} Augmenter le nombre de questions traitées sur ELI5 et TriviaQA, produire des tables de métriques complètes (Brier, ECE, AUROC, AUPRC) pour chaque combinaison méthode$\times$dataset, et effectuer des tests de significativité statistique.
     \item \textbf{Évaluation du pipeline vision.} Entraîner (ou fine-tuner) les modèles ResNet sur le dataset EST, calibrer les méthodes d'incertitude (temperature scaling), et évaluer leur capacité à détecter les cas de fraude incertains.
     \item \textbf{Synthèse comparative et recommandations.} Formaliser une comparaison systématique white-box vs black-box selon les axes coût computationnel, qualité de calibration et applicabilité pratique, avec des recommandations pour le cas d'usage Société Générale.
 \end{enumerate}
-
 \vfill
-
 \section*{Annexes}
-
 Les résumés des articles, fiches méthodologiques, code source, figures des statistiques descriptives et résultats intermédiaires sont disponibles sur le Github du projet.
-
 \url{https://github.com/gregouzeee/statapp}
-
 \end{document}
