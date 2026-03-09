@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-03-02T15:27:27.510319",
+  "task": "MIDV Fine-Grained Country Classification (10 classes) - Uncertainty",
+  "metrics": {
+    "accuracy": 1.0,
+    "mean_confidence": 0.9998874664306641,
+    "min_confidence": 0.9990099668502808,
+    "max_confidence": 0.9999897480010986,
+    "total_samples": 150,
+    "correct_predictions": 150
+  },
+  "calibration": {
+    "conf_correct": 0.9998874664306641,
+    "conf_wrong": 0.0,
+    "calibration_gap": 0.9998874664306641
+  },
+  "per_method": {
+    "conformal": {
+      "mean": 0.9999436736106873,
+      "std": 7.814571290509775e-05
+    },
+    "entropy": {
+      "mean": 0.9997629523277283,
+      "std": 0.0002840070810634643
+    },
+    "selfcheck": {
+      "mean": 0.9999558329582214,
+      "std": 5.979728666716255e-05
+    }
+  },
+  "confusion_pairs": {}
+}

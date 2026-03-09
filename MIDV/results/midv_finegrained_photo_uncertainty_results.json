@@ -1,0 +1,34 @@
+{
+  "timestamp": "2026-03-02T15:55:40.867869",
+  "task": "MIDV Fine-Grained Country Classification (10 classes) \u2014 PHOTO - Uncertainty",
+  "metrics": {
+    "accuracy": 0.98,
+    "mean_confidence": 0.9437426924705505,
+    "min_confidence": 0.08079614490270615,
+    "max_confidence": 0.9999993443489075,
+    "total_samples": 150,
+    "correct_predictions": 147
+  },
+  "calibration": {
+    "conf_correct": 0.9609500765800476,
+    "conf_wrong": 0.10057739168405533,
+    "calibration_gap": 0.8603726625442505
+  },
+  "per_method": {
+    "conformal": {
+      "mean": 0.9415008425712585,
+      "std": 0.19347643852233887
+    },
+    "entropy": {
+      "mean": 0.9345134496688843,
+      "std": 0.18521520495414734
+    },
+    "selfcheck": {
+      "mean": 0.9552138447761536,
+      "std": 0.1527976393699646
+    }
+  },
+  "confusion_pairs": {
+    "Russian Passport \u2192 Serbian Passport": 3
+  }
+}

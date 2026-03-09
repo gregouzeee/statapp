@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-03-02T15:25:43.875411",
+  "task": "MIDV Fine-Grained Country Classification (10 classes)",
+  "configuration": {
+    "num_epochs": 5,
+    "batch_size": 16,
+    "max_images_per_country": 100,
+    "num_classes": 10,
+    "device": "mps"
+  },
+  "metrics": {
+    "train_loss": 0.00047717314373585396,
+    "val_loss": 3.408123175177025e-05,
+    "test_loss": 4.2542946175672114e-05,
+    "test_accuracy": 1.0,
+    "training_time_seconds": 354.5632281303406
+  },
+  "dataset_sizes": {
+    "train": 700,
+    "val": 150,
+    "test": 150,
+    "total": 1000
+  },
+  "country_classes": {
+    "0": "Albanian ID",
+    "1": "Spanish ID",
+    "2": "Estonian ID",
+    "3": "Finnish ID",
+    "4": "Slovak ID",
+    "5": "Azerbaijani Passport",
+    "6": "Greek Passport",
+    "7": "Latvian Passport",
+    "8": "Russian Passport",
+    "9": "Serbian Passport"
+  }
+}
