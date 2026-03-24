@@ -1,0 +1,11 @@
+method,criterion,lambda,alpha_star,coverage,target,miscoverage,avg_set_size
+lac,C1_min_size_s.t._coverage>=target,,0.271,0.744,0.729,0.256,1.0
+lac,C2_penalized_size+lambda*miscoverage,1.0,0.271,0.744,0.729,0.256,1.0
+lac,C2_penalized_size+lambda*miscoverage,5.0,0.2192,0.784,0.7807999999999999,0.21599999999999997,1.172
+lac,C2_penalized_size+lambda*miscoverage,10.0,0.2032,0.796,0.7968,0.20399999999999996,1.292
+lac,C3_min_size_s.t._coverage>=0.90,,0.0479,0.908,0.9,0.09199999999999997,2.996
+aps,C1_min_size_s.t._coverage>=target,,0.259,0.848,0.741,0.15200000000000002,2.308
+aps,C2_penalized_size+lambda*miscoverage,1.0,0.259,0.848,0.741,0.15200000000000002,2.308
+aps,C2_penalized_size+lambda*miscoverage,5.0,0.259,0.848,0.741,0.15200000000000002,2.308
+aps,C2_penalized_size+lambda*miscoverage,10.0,0.259,0.848,0.741,0.15200000000000002,2.308
+aps,C3_min_size_s.t._coverage>=0.90,,0.0001,1.0,0.9,0.0,4.0

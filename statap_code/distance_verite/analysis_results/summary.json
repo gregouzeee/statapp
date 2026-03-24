@@ -1,0 +1,50 @@
+{
+  "n_rows": 3397,
+  "n_correct": 2932,
+  "accuracy": 0.8631145128054165,
+  "confidence_columns_used": [
+    "confidence_verbalized",
+    "judge_confidence",
+    "prob_tokens_only.prob_joint",
+    "prob_tokens_only.prob_geo_mean",
+    "prob_tokens_only.logprob_sum",
+    "prob_tokens_only.logprob_avg",
+    "prob_tokens_only.perplexity",
+    "prob_tokens_only.p_min",
+    "prob_all_tokens.prob_joint",
+    "prob_all_tokens.prob_geo_mean",
+    "prob_all_tokens.logprob_sum",
+    "prob_all_tokens.logprob_avg",
+    "prob_all_tokens.perplexity",
+    "prob_all_tokens.p_min"
+  ],
+  "best_auc_metric": {
+    "confidence_col": "prob_tokens_only.logprob_avg",
+    "n": 3395,
+    "accuracy": 0.8636229749631812,
+    "score_mean": -0.018517147777757353,
+    "AUC": 0.8572138376269599,
+    "AUC_CI_lo": 0.8355496165858541,
+    "AUC_CI_hi": 0.8778220115627358,
+    "bootstrap_valid_samples": 2000
+  },
+  "best_calibrated_metric": {
+    "confidence_col": "prob_tokens_only.prob_joint",
+    "n": 3395,
+    "is_probability_like": true,
+    "brier": 0.11385185667651933,
+    "ece_10bins": 0.11384262755216876,
+    "mean_conf": 0.9730499286349399,
+    "accuracy": 0.8636229749631812,
+    "calib_intercept": -0.6096798664857682,
+    "calib_slope": 0.14980805612830608
+  },
+  "best_wrong_error_ranker_abs": {
+    "confidence_col": "prob_tokens_only.logprob_sum",
+    "error_col": "log1p_abs_error",
+    "n_wrong": 463,
+    "pearson_wrong_only": -0.003516031803168608,
+    "spearman_wrong_only": -0.15264291541700847,
+    "abs_spearman": 0.15264291541700847
+  }
+}

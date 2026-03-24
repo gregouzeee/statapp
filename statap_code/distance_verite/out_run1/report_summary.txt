@@ -1,0 +1,6 @@
+Rows total: 3397
+Numeric answers: 3397 (100.0%)
+Answer mean=1494.55, median=1851.00, std=4667.52
+Integer-like answers (.0): 3393 (99.9%)
+Detected types: {'year': 1897, 'age': 1194, 'medium_int': 244, 'large_number': 30, 'other_numeric': 28, 'negative': 4}
+Correlation question length (words) vs answer: 0.011

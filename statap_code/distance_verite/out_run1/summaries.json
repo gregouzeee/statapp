@@ -1,0 +1,21 @@
+{
+  "n_total": 3397,
+  "n_numeric": 3397,
+  "fraction_numeric": 1.0,
+  "mean": 1494.5469119811596,
+  "median": 1851.0,
+  "std": 4667.5240225452535,
+  "min": -273.0,
+  "max": 90000.0,
+  "skew": 14.975597207435214,
+  "kurtosis": 250.4555398694245,
+  "q25": 40.0,
+  "q75": 1967.0,
+  "iqr": 1927.0,
+  "n_integer_like": 3393,
+  "fraction_integer_like": 0.9988224904327347,
+  "iqr_lower": -2850.5,
+  "iqr_upper": 4857.5,
+  "n_outliers_iqr": 37,
+  "n_outliers_z": 21
+}

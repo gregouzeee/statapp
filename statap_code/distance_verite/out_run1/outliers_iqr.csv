@@ -1,0 +1,38 @@
+question,answer,answer_numeric,is_integer_like,decimals,answer_type,decade,century,q_len_chars,q_len_words,q_wh_type,outlier_iqr,zscore,outlier_z
+In square miles how big is lake Michigan?,22300.0,22300.0,True,0,large_number,,,41,8,area,True,4.457492449427907,True
+"In square miles, how big is lake Superior?",31700.0,31700.0,True,0,large_number,,,42,8,area,True,6.47140816889625,True
+What was the attendance at the 2002 World Cup Final?,69029.0,69029.0,True,0,large_number,,,52,10,what,True,14.469010285070057,True
+What was the attendance at the 2003 Rugby World Cup final when England beat Australia?,82957.0,82957.0,True,0,large_number,,,86,15,when,True,17.453033491533365,True
+"In 2006 there were approximately how many pubs in the UK? 47,500, 57,500 or 67,500?",57500.0,57500.0,True,0,large_number,,,83,15,quantity,True,11.998964079777448,True
+How many British troops were killed on the first day of the Battle of the Somme on 1 July 1916?,20000.0,20000.0,True,0,large_number,,,95,20,quantity,True,3.9647258372175678,True
+"In the computer game ‘The Sims’, how many Simoleons does each family start the game with?",20000.0,20000.0,True,0,large_number,,,89,16,quantity,True,3.9647258372175678,True
+How many inches are in an imperial mile?,63360.0,63360.0,True,0,large_number,,,40,8,quantity,True,13.254447709148138,True
+How many ounces are in a US (short) ton?,32000.0,32000.0,True,0,large_number,,,40,9,quantity,True,6.535682074836729,True
+What is the all-seated capacity of Wembley Stadium in London?,90000.0,90000.0,True,0,large_number,,,61,10,what,True,18.961970556662678,True
+How many feet in a UK mile?,5280.0,5280.0,True,0,other_numeric,,,27,7,quantity,True,0.8110195190713962,False
+How many inches in a UK mile?,63360.0,63360.0,True,0,large_number,,,29,7,quantity,True,13.254447709148138,True
+What area in square metres is a hectare?,10000.0,10000.0,True,0,large_number,,,40,8,area,True,1.8222623058682663,False
+"Approximately what is the surface temperature of the Sun, in degrees centigrade?",5500.0,5500.0,True,0,other_numeric,,,80,12,what,True,0.8581537167610809,False
+The Philippines comprises how many islands?,7107.0,7107.0,True,0,other_numeric,,,43,6,quantity,True,1.2024476062489136,False
+Author Malcolm Gladwell popularized the notion (2000s) that to become truly expert at something a minimum of how many hours practice is required?,10000.0,10000.0,True,0,large_number,,,145,23,quantity,True,1.8222623058682663,False
+Approximately how many litres of water is required to produce a kilo of grain-fed beef?,15000.0,15000.0,True,0,large_number,,,87,15,quantity,True,2.893494071542917,False
+"Dragonflies have the sharpest vision of any insect, each compound eye having how many lenses?",30000.0,30000.0,True,0,large_number,,,93,15,quantity,True,6.1071893685668694,True
+What is the diameter of the world in kilometres?,12742.0,12742.0,True,0,large_number,,,48,9,what,True,2.4097258061642446,False
+What is the number of points required to win a game of Canasta?,5000.0,5000.0,True,0,other_numeric,,,63,13,what,True,0.7510305401936158,False
+"If you add all the numbers from 1 to 100, what is the sum?",5050.0,5050.0,True,0,other_numeric,,,58,14,what,True,0.7617428578503623,False
+"""How many leagues did Captain Nemo travel """"under the sea""""?""",20000.0,20000.0,True,0,large_number,,,61,10,quantity,True,3.9647258372175678,True
+"To the nearest 5000, what is the crowd capacity of the new Wembley Stadium?",90000.0,90000.0,True,0,large_number,,,75,14,what,True,18.961970556662678,True
+"To the nearest 1000, what is the crowd capacity on Centre Court at Wimbiedon?",15000.0,15000.0,True,0,large_number,,,77,14,what,True,2.893494071542917,False
+How many square metres are there in a hectare?,10000.0,10000.0,True,0,large_number,,,46,9,quantity,True,1.8222623058682663,False
+"November is unofficially National Novel Writing Month, when people are encouraged to write a story of at least how many words?",50000.0,50000.0,True,0,large_number,,,126,21,quantity,True,10.392116431265471,True
+What was the attendance at the 2003 Rugby World Cup final when England beat Australia?,82957.0,82957.0,True,0,large_number,,,86,15,when,True,17.453033491533365,True
+How many British troops were killed on the first day of the Battle of the Somme on 1 July 1916?,20000.0,20000.0,True,0,large_number,,,95,20,quantity,True,3.9647258372175678,True
+What is the all-seated capacity of Wembley Stadium in London?,90000.0,90000.0,True,0,large_number,,,61,10,what,True,18.961970556662678,True
+What area in square metres is a hectare?,10000.0,10000.0,True,0,large_number,,,40,8,area,True,1.8222623058682663,False
+Author Malcolm Gladwell popularized the notion (2000s) that to become truly expert at something a minimum of how many hours practice is required?,10000.0,10000.0,True,0,large_number,,,145,23,quantity,True,1.8222623058682663,False
+What is the number of points required to win a game of Canasta?,5000.0,5000.0,True,0,other_numeric,,,63,13,what,True,0.7510305401936158,False
+"If you add all the numbers from 1 to 100, what is the sum?",5050.0,5050.0,True,0,other_numeric,,,58,14,what,True,0.7617428578503623,False
+"""How many leagues did Captain Nemo travel """"under the sea""""?""",20000.0,20000.0,True,0,large_number,,,61,10,quantity,True,3.9647258372175678,True
+"To the nearest 5000, what is the crowd capacity of the new Wembley Stadium?",90000.0,90000.0,True,0,large_number,,,75,14,what,True,18.961970556662678,True
+"To the nearest 1000, what is the crowd capacity on Centre Court at Wimbiedon?",15000.0,15000.0,True,0,large_number,,,77,14,what,True,2.893494071542917,False
+"November is unofficially National Novel Writing Month, when people are encouraged to write a story of at least how many words?",50000.0,50000.0,True,0,large_number,,,126,21,quantity,True,10.392116431265471,True

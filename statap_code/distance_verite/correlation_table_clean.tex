@@ -1,0 +1,74 @@
+\begin{longtable}{llrrrrrrllll}
+\caption{Correlations between confidence signals and distance to the ground truth.} \label{tab:confidence_distance_correlations} \\
+\toprule
+Confidence score & Distance & $n$ all & Pearson all & Spearman all & $n$ wrong only & Pearson wrong only & Spearman wrong only & Effect all & Effect wrong only & Direction all & Direction wrong only \\
+\midrule
+\endfirsthead
+\caption[]{Correlations between confidence signals and distance to the ground truth.} \\
+\toprule
+Confidence score & Distance & $n$ all & Pearson all & Spearman all & $n$ wrong only & Pearson wrong only & Spearman wrong only & Effect all & Effect wrong only & Direction all & Direction wrong only \\
+\midrule
+\endhead
+\midrule
+\multicolumn{12}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+confidence_verbalized & abs_error & 3395 & -0.042457 & -0.270188 & 463 & -0.030027 & -0.131958 & faible à modéré & faible & sens attendu & sens attendu \\
+confidence_verbalized & log1p_abs_error & 3395 & -0.284130 & -0.270188 & 463 & -0.119430 & -0.131958 & faible à modéré & faible & sens attendu & sens attendu \\
+confidence_verbalized & log_error & 3395 & -0.126969 & -0.264358 & 463 & -0.053670 & 0.142835 & faible à modéré & faible & sens attendu & sens opposé \\
+confidence_verbalized & rel_error & 3395 & -0.044167 & -0.261465 & 463 & -0.035792 & 0.156776 & faible à modéré & faible & sens attendu & sens opposé \\
+judge_confidence & abs_error & 3391 & -0.015042 & -0.266805 & 460 & -0.006305 & -0.032685 & faible à modéré & quasi nul & sens attendu & sens attendu \\
+judge_confidence & log1p_abs_error & 3391 & -0.162569 & -0.266805 & 460 & -0.125426 & -0.032685 & faible à modéré & quasi nul & sens attendu & sens attendu \\
+judge_confidence & log_error & 3391 & -0.111472 & -0.265185 & 460 & -0.129213 & 0.037922 & faible à modéré & quasi nul & sens attendu & sens opposé \\
+judge_confidence & rel_error & 3391 & -0.017058 & -0.263898 & 460 & -0.012207 & 0.047376 & faible à modéré & quasi nul & sens attendu & sens opposé \\
+prob_all_tokens.logprob_avg & abs_error & 3395 & -0.018171 & -0.156858 & 463 & -0.005060 & -0.047283 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.logprob_avg & log1p_abs_error & 3395 & -0.156985 & -0.156858 & 463 & -0.011949 & -0.047283 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.logprob_avg & log_error & 3395 & -0.063546 & -0.158993 & 463 & -0.003188 & -0.039990 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.logprob_avg & rel_error & 3395 & -0.021559 & -0.155558 & 463 & -0.012972 & -0.021579 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.logprob_sum & abs_error & 3395 & -0.024755 & -0.152897 & 463 & -0.016364 & -0.043605 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.logprob_sum & log1p_abs_error & 3395 & -0.152380 & -0.152897 & 463 & -0.013528 & -0.043605 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.logprob_sum & log_error & 3395 & -0.062083 & -0.154579 & 463 & -0.004346 & -0.021224 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.logprob_sum & rel_error & 3395 & -0.028308 & -0.151168 & 463 & -0.024170 & -0.003246 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.p_min & abs_error & 3395 & -0.011096 & -0.117806 & 463 & -0.006719 & -0.002648 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.p_min & log1p_abs_error & 3395 & -0.088027 & -0.117806 & 463 & -0.009901 & -0.002648 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.p_min & log_error & 3395 & -0.031333 & -0.118992 & 463 & 0.009012 & 0.038276 & faible & quasi nul & sens attendu & sens opposé \\
+prob_all_tokens.p_min & rel_error & 3395 & -0.014023 & -0.115786 & 463 & -0.016270 & 0.053115 & faible & très faible & sens attendu & sens opposé \\
+prob_all_tokens.perplexity & abs_error & 3395 & 0.017245 & 0.156858 & 463 & 0.003264 & 0.047283 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.perplexity & log1p_abs_error & 3395 & 0.156418 & 0.156858 & 463 & 0.008786 & 0.047283 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.perplexity & log_error & 3395 & 0.062005 & 0.158993 & 463 & 0.000089 & 0.039990 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.perplexity & rel_error & 3395 & 0.020503 & 0.155558 & 463 & 0.010631 & 0.021579 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.prob_geo_mean & abs_error & 3395 & -0.018971 & -0.156858 & 463 & -0.006841 & -0.047283 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.prob_geo_mean & log1p_abs_error & 3395 & -0.156938 & -0.156858 & 463 & -0.015102 & -0.047283 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.prob_geo_mean & log_error & 3395 & -0.064649 & -0.158993 & 463 & -0.006134 & -0.039990 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.prob_geo_mean & rel_error & 3395 & -0.022465 & -0.155558 & 463 & -0.015233 & -0.021579 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.prob_joint & abs_error & 3395 & -0.030863 & -0.152897 & 463 & -0.047488 & -0.043605 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.prob_joint & log1p_abs_error & 3395 & -0.135008 & -0.152897 & 463 & -0.061255 & -0.043605 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.prob_joint & log_error & 3395 & -0.063948 & -0.154579 & 463 & -0.041647 & -0.021224 & faible & quasi nul & sens attendu & sens attendu \\
+prob_all_tokens.prob_joint & rel_error & 3395 & -0.035082 & -0.151168 & 463 & -0.060540 & -0.003246 & faible & quasi nul & sens attendu & sens attendu \\
+prob_tokens_only.logprob_avg & abs_error & 3395 & -0.002167 & -0.425641 & 463 & 0.023010 & -0.146024 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.logprob_avg & log1p_abs_error & 3395 & -0.230650 & -0.425641 & 463 & -0.003988 & -0.146024 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.logprob_avg & log_error & 3395 & -0.103590 & -0.426609 & 463 & -0.012803 & -0.214042 & modéré & faible à modéré & sens attendu & sens attendu \\
+prob_tokens_only.logprob_avg & rel_error & 3395 & -0.002963 & -0.425326 & 463 & 0.019848 & -0.192430 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.logprob_sum & abs_error & 3395 & -0.014186 & -0.425553 & 463 & 0.005245 & -0.152643 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.logprob_sum & log1p_abs_error & 3395 & -0.192564 & -0.425553 & 463 & -0.003516 & -0.152643 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.logprob_sum & log_error & 3395 & -0.077316 & -0.426768 & 463 & -0.000056 & -0.185736 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.logprob_sum & rel_error & 3395 & -0.015566 & -0.425616 & 463 & 0.001876 & -0.165006 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.p_min & abs_error & 3395 & -0.025617 & -0.414901 & 463 & 0.000384 & -0.132909 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.p_min & log1p_abs_error & 3395 & -0.277212 & -0.414901 & 463 & -0.032132 & -0.132909 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.p_min & log_error & 3395 & -0.129688 & -0.415452 & 463 & -0.032686 & -0.158881 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.p_min & rel_error & 3395 & -0.027940 & -0.413848 & 463 & -0.005630 & -0.138356 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.perplexity & abs_error & 3395 & -0.000183 & 0.425641 & 463 & -0.018036 & 0.146024 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.perplexity & log1p_abs_error & 3395 & 0.170671 & 0.425641 & 463 & 0.000509 & 0.146024 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.perplexity & log_error & 3395 & 0.070058 & 0.426609 & 463 & 0.001004 & 0.214042 & modéré & faible à modéré & sens attendu & sens attendu \\
+prob_tokens_only.perplexity & rel_error & 3395 & 0.000278 & 0.425326 & 463 & -0.015957 & 0.192430 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.prob_geo_mean & abs_error & 3395 & -0.005150 & -0.493118 & 463 & 0.024038 & -0.149965 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.prob_geo_mean & log1p_abs_error & 3395 & -0.262131 & -0.493118 & 463 & -0.010225 & -0.149965 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.prob_geo_mean & log_error & 3395 & -0.123225 & -0.495540 & 463 & -0.023712 & -0.222229 & modéré & faible à modéré & sens attendu & sens attendu \\
+prob_tokens_only.prob_geo_mean & rel_error & 3395 & -0.006231 & -0.492954 & 463 & 0.020074 & -0.198807 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.prob_joint & abs_error & 3395 & -0.042301 & -0.492527 & 463 & -0.020382 & -0.152014 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.prob_joint & log1p_abs_error & 3395 & -0.294001 & -0.492527 & 463 & -0.051953 & -0.152014 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.prob_joint & log_error & 3395 & -0.141104 & -0.494483 & 463 & -0.044534 & -0.180300 & modéré & faible & sens attendu & sens attendu \\
+prob_tokens_only.prob_joint & rel_error & 3395 & -0.045566 & -0.491914 & 463 & -0.027630 & -0.158374 & modéré & faible & sens attendu & sens attendu \\
+\end{longtable}

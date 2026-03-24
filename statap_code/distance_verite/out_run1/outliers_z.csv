@@ -1,0 +1,22 @@
+question,answer,answer_numeric,is_integer_like,decimals,answer_type,decade,century,q_len_chars,q_len_words,q_wh_type,outlier_iqr,zscore,outlier_z
+In square miles how big is lake Michigan?,22300.0,22300.0,True,0,large_number,,,41,8,area,True,4.457492449427907,True
+"In square miles, how big is lake Superior?",31700.0,31700.0,True,0,large_number,,,42,8,area,True,6.47140816889625,True
+What was the attendance at the 2002 World Cup Final?,69029.0,69029.0,True,0,large_number,,,52,10,what,True,14.469010285070057,True
+What was the attendance at the 2003 Rugby World Cup final when England beat Australia?,82957.0,82957.0,True,0,large_number,,,86,15,when,True,17.453033491533365,True
+"In 2006 there were approximately how many pubs in the UK? 47,500, 57,500 or 67,500?",57500.0,57500.0,True,0,large_number,,,83,15,quantity,True,11.998964079777448,True
+How many British troops were killed on the first day of the Battle of the Somme on 1 July 1916?,20000.0,20000.0,True,0,large_number,,,95,20,quantity,True,3.9647258372175678,True
+"In the computer game ‘The Sims’, how many Simoleons does each family start the game with?",20000.0,20000.0,True,0,large_number,,,89,16,quantity,True,3.9647258372175678,True
+How many inches are in an imperial mile?,63360.0,63360.0,True,0,large_number,,,40,8,quantity,True,13.254447709148138,True
+How many ounces are in a US (short) ton?,32000.0,32000.0,True,0,large_number,,,40,9,quantity,True,6.535682074836729,True
+What is the all-seated capacity of Wembley Stadium in London?,90000.0,90000.0,True,0,large_number,,,61,10,what,True,18.961970556662678,True
+How many inches in a UK mile?,63360.0,63360.0,True,0,large_number,,,29,7,quantity,True,13.254447709148138,True
+"Dragonflies have the sharpest vision of any insect, each compound eye having how many lenses?",30000.0,30000.0,True,0,large_number,,,93,15,quantity,True,6.1071893685668694,True
+"""How many leagues did Captain Nemo travel """"under the sea""""?""",20000.0,20000.0,True,0,large_number,,,61,10,quantity,True,3.9647258372175678,True
+"To the nearest 5000, what is the crowd capacity of the new Wembley Stadium?",90000.0,90000.0,True,0,large_number,,,75,14,what,True,18.961970556662678,True
+"November is unofficially National Novel Writing Month, when people are encouraged to write a story of at least how many words?",50000.0,50000.0,True,0,large_number,,,126,21,quantity,True,10.392116431265471,True
+What was the attendance at the 2003 Rugby World Cup final when England beat Australia?,82957.0,82957.0,True,0,large_number,,,86,15,when,True,17.453033491533365,True
+How many British troops were killed on the first day of the Battle of the Somme on 1 July 1916?,20000.0,20000.0,True,0,large_number,,,95,20,quantity,True,3.9647258372175678,True
+What is the all-seated capacity of Wembley Stadium in London?,90000.0,90000.0,True,0,large_number,,,61,10,what,True,18.961970556662678,True
+"""How many leagues did Captain Nemo travel """"under the sea""""?""",20000.0,20000.0,True,0,large_number,,,61,10,quantity,True,3.9647258372175678,True
+"To the nearest 5000, what is the crowd capacity of the new Wembley Stadium?",90000.0,90000.0,True,0,large_number,,,75,14,what,True,18.961970556662678,True
+"November is unofficially National Novel Writing Month, when people are encouraged to write a story of at least how many words?",50000.0,50000.0,True,0,large_number,,,126,21,quantity,True,10.392116431265471,True
