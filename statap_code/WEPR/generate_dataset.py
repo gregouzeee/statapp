@@ -25,18 +25,15 @@ from google import genai
 from google.genai import types
 from tqdm import tqdm
 
-# Only show our own logs + warnings from libraries
+# Set root logger to ERROR so all libraries are silent by default
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.ERROR,
     format="%(asctime)s [%(levelname)s] %(message)s",
     datefmt="%H:%M:%S",
 )
-# Silence noisy library loggers
-for name in logging.root.manager.loggerDict:
-    if name != "wepr":
-        logging.getLogger(name).setLevel(logging.ERROR)
-
+# Only our logger gets to speak
 log = logging.getLogger("wepr")
+log.setLevel(logging.INFO)
 
 
 # ──────────────────────────── Defaults ────────────────────────────
