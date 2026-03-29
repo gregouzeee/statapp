@@ -208,3 +208,6 @@ __marimo__/
 
 # MIDV database
 MIDV/datasets/
+
+# PyTorch model files
+*.pt
