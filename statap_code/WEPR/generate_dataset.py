@@ -7,7 +7,7 @@ the full top-K log-probabilities at each token position.
 This is the data needed to train and evaluate WEPR.
 
 Usage:
-    python generate_dataset.py [--num_questions 1000] [--logprobs_k 10] [--concurrency 10]
+    python generate_dataset.py [--num_questions 1000] [--logprobs_k 10] [--concurrency 8]
 """
 
 import argparse
@@ -25,11 +25,19 @@ from google import genai
 from google.genai import types
 from tqdm import tqdm
 
+# Only show our own logs + warnings from libraries
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
     datefmt="%H:%M:%S",
 )
+# Silence noisy library loggers
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("google").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
+log = logging.getLogger("wepr")
 
 
 # ──────────────────────────── Defaults ────────────────────────────
@@ -40,7 +48,7 @@ DEFAULT_MAX_OUTPUT_TOKENS = 128
 DEFAULT_TEMPERATURE = 1.0  # T=1.0 comme dans l'article EPR
 DEFAULT_NUM_QUESTIONS = 0  # 0 = all available questions
 DEFAULT_MAX_RETRIES = 5
-DEFAULT_CONCURRENCY = 10
+DEFAULT_CONCURRENCY = 8
 
 OUT_DIR = Path(__file__).resolve().parent / "data"
 OUT_JSONL = OUT_DIR / "triviaqa_topk.jsonl"
@@ -88,9 +96,35 @@ def extract_token_logprobs(resp) -> List[Dict]:
     return tokens
 
 
+# ──────────── Rate limit tracker ───────────────
+
+class RateLimitTracker:
+    """Track rate limit hits and dynamically back off globally."""
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.hits = 0
+        self.last_hit_time = 0.0
+
+    def record_hit(self):
+        with self.lock:
+            self.hits += 1
+            self.last_hit_time = time.monotonic()
+
+    def seconds_since_last_hit(self) -> float:
+        with self.lock:
+            if self.last_hit_time == 0:
+                return float("inf")
+            return time.monotonic() - self.last_hit_time
+
+    @property
+    def total_hits(self):
+        with self.lock:
+            return self.hits
+
+
 # ──────────── Single question processing ───────────────
 
-def process_one(client, item, args) -> dict:
+def process_one(client, item, args, rate_tracker: RateLimitTracker) -> dict:
     """Process a single question: call Gemini, extract logprobs, return result dict."""
     qid = item["question_id"]
     question = item["question"]
@@ -104,10 +138,14 @@ def process_one(client, item, args) -> dict:
 
     prompt = make_prompt(question)
 
-    log = logging.getLogger("worker")
     resp = None
     last_err = None
     for attempt in range(1, DEFAULT_MAX_RETRIES + 1):
+        # If we got rate-limited recently, wait before even trying
+        since_last = rate_tracker.seconds_since_last_hit()
+        if since_last < 2.0:
+            time.sleep(2.0 - since_last)
+
         t0 = time.monotonic()
         try:
             resp = client.models.generate_content(
@@ -121,8 +159,6 @@ def process_one(client, item, args) -> dict:
                     candidate_count=1,
                 ),
             )
-            elapsed = time.monotonic() - t0
-            log.debug(f"[{qid}] OK in {elapsed:.2f}s")
             break
         except Exception as e:
             elapsed = time.monotonic() - t0
@@ -130,17 +166,24 @@ def process_one(client, item, args) -> dict:
             if any(fatal in last_err for fatal in
                    ["Credentials", "credentials", "BILLING",
                     "PERMISSION_DENIED", "limit: 0"]):
-                log.error(f"[{qid}] FATAL error: {last_err}")
+                log.error(f"FATAL: {last_err}")
                 raise
             is_rate_limit = "429" in last_err or "RESOURCE_EXHAUSTED" in last_err
             if is_rate_limit:
+                rate_tracker.record_hit()
                 wait = min(5.0 * attempt, 30.0)
-                log.warning(f"[{qid}] RATE LIMITED (attempt {attempt}/{DEFAULT_MAX_RETRIES}, "
-                            f"took {elapsed:.2f}s). Waiting {wait:.0f}s...")
+                # Log full error on first hit to capture quota details
+                if rate_tracker.total_hits <= 3:
+                    log.warning(f"429 RATE LIMITED (attempt {attempt}/{DEFAULT_MAX_RETRIES}). "
+                                f"Full error:\n{last_err}\n"
+                                f"Waiting {wait:.0f}s...")
+                else:
+                    log.warning(f"429 RATE LIMITED (attempt {attempt}/{DEFAULT_MAX_RETRIES}). "
+                                f"Waiting {wait:.0f}s... [total 429s: {rate_tracker.total_hits}]")
             else:
                 wait = min(2.0 * attempt, 10.0)
-                log.warning(f"[{qid}] ERROR (attempt {attempt}/{DEFAULT_MAX_RETRIES}, "
-                            f"took {elapsed:.2f}s): {last_err[:100]}. Waiting {wait:.0f}s...")
+                log.warning(f"ERROR (attempt {attempt}/{DEFAULT_MAX_RETRIES}): "
+                            f"{last_err[:200]}. Waiting {wait:.0f}s...")
             time.sleep(wait)
 
     if resp is None:
@@ -193,7 +236,7 @@ def main():
     parser.add_argument("--resume", action="store_true", default=True)
     parser.add_argument("--no-resume", dest="resume", action="store_false")
     parser.add_argument("--concurrency", type=int, default=DEFAULT_CONCURRENCY,
-                        help="Number of parallel API calls")
+                        help="Number of parallel API calls (default: 8)")
     args = parser.parse_args()
 
     load_dotenv()
@@ -238,16 +281,17 @@ def main():
 
     print(f"Concurrency: {args.concurrency} parallel requests")
 
-    # File write lock (threads write results concurrently)
+    # Shared state
     write_lock = threading.Lock()
-
-    # Semaphore to limit concurrency
+    rate_tracker = RateLimitTracker()
     semaphore = asyncio.Semaphore(args.concurrency)
 
     async def process_async(item, fout, pbar):
         async with semaphore:
             loop = asyncio.get_event_loop()
-            result = await loop.run_in_executor(None, process_one, client, item, args)
+            result = await loop.run_in_executor(
+                None, process_one, client, item, args, rate_tracker
+            )
             line = json.dumps(result, ensure_ascii=False) + "\n"
             with write_lock:
                 fout.write(line)
@@ -255,30 +299,32 @@ def main():
             pbar.update(1)
 
     async def run_all():
-        log = logging.getLogger("main")
         batch_num = 0
-        rate_limits_total = 0
-        errors_total = 0
+        t_start = time.monotonic()
 
         with open(OUT_JSONL, "a", encoding="utf-8") as fout:
             pbar = tqdm(desc="Generating", unit="q", total=total)
             tasks = []
+            processed = 0
             for item in ds:
                 qid = item["question_id"]
                 if args.resume and qid in done:
                     pbar.update(1)
                     continue
                 tasks.append(process_async(item, fout, pbar))
-                # Launch in batches to avoid buffering too many items from the stream
+                # Launch in batches
                 if len(tasks) >= args.concurrency * 2:
                     batch_num += 1
                     batch_size = len(tasks)
                     t0 = time.monotonic()
                     await asyncio.gather(*tasks)
                     elapsed = time.monotonic() - t0
+                    processed += batch_size
                     qps = batch_size / elapsed if elapsed > 0 else 0
-                    log.info(f"Batch {batch_num}: {batch_size} questions in {elapsed:.1f}s "
-                             f"({qps:.1f} q/s)")
+                    avg_qps = processed / (time.monotonic() - t_start)
+                    log.info(f"Batch {batch_num}: {batch_size}q in {elapsed:.1f}s "
+                             f"({qps:.1f} q/s, avg {avg_qps:.1f} q/s) "
+                             f"| 429s: {rate_tracker.total_hits}")
                     tasks = []
             if tasks:
                 batch_num += 1
@@ -286,10 +332,18 @@ def main():
                 t0 = time.monotonic()
                 await asyncio.gather(*tasks)
                 elapsed = time.monotonic() - t0
+                processed += batch_size
                 qps = batch_size / elapsed if elapsed > 0 else 0
-                log.info(f"Batch {batch_num} (final): {batch_size} questions in {elapsed:.1f}s "
-                         f"({qps:.1f} q/s)")
+                avg_qps = processed / (time.monotonic() - t_start)
+                log.info(f"Batch {batch_num} (final): {batch_size}q in {elapsed:.1f}s "
+                         f"({qps:.1f} q/s, avg {avg_qps:.1f} q/s) "
+                         f"| 429s: {rate_tracker.total_hits}")
             pbar.close()
+
+        total_elapsed = time.monotonic() - t_start
+        log.info(f"Finished {processed} questions in {total_elapsed:.0f}s "
+                 f"(avg {processed/total_elapsed:.1f} q/s, "
+                 f"{rate_tracker.total_hits} rate limits)")
 
     asyncio.run(run_all())
 
