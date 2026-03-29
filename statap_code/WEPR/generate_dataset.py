@@ -104,17 +104,19 @@ def main():
 
     client = genai.Client(vertexai=True, project=project, location=location)
 
-    # Load TriviaQA
+    # Load TriviaQA (streaming — never loads everything in RAM)
     from datasets import load_dataset
 
     print(f"Loading TriviaQA (split={args.split}, streaming)...")
     ds_stream = load_dataset("trivia_qa", "rc", split=args.split, streaming=True)
     if args.num_questions > 0:
-        ds = list(ds_stream.take(args.num_questions))
-        print(f"Loaded {len(ds)} questions (limited to {args.num_questions}).")
+        ds = ds_stream.take(args.num_questions)
+        total = args.num_questions
+        print(f"Will process up to {args.num_questions} questions (streaming).")
     else:
-        ds = list(ds_stream)
-        print(f"Loaded {len(ds)} questions (all available).")
+        ds = ds_stream
+        total = None
+        print("Will process all available questions (streaming).")
 
     # Resume logic
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -135,7 +137,7 @@ def main():
 
     # Main loop
     with open(OUT_JSONL, "a", encoding="utf-8") as fout:
-        for item in tqdm(ds, desc="Generating", unit="q"):
+        for item in tqdm(ds, desc="Generating", unit="q", total=total):
             qid = item["question_id"]
             if args.resume and qid in done:
                 continue
