@@ -47,7 +47,7 @@ DEFAULT_MAX_OUTPUT_TOKENS = 128
 DEFAULT_TEMPERATURE = 1.0  # T=1.0 comme dans l'article EPR
 DEFAULT_NUM_QUESTIONS = 0  # 0 = all available questions
 DEFAULT_MAX_RETRIES = 5
-DEFAULT_CONCURRENCY = 8
+DEFAULT_CONCURRENCY = 5
 
 OUT_DIR = Path(__file__).resolve().parent / "data"
 OUT_JSONL = OUT_DIR / "triviaqa_topk.jsonl"
