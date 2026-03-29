@@ -23,7 +23,7 @@
 % =============================================================================
 \section{Rappel du contexte et objectifs}
 % =============================================================================
-Les Large Language Models (LLMs) génèrent des réponses textuelles fluides mais sans indication de leur degré de confiance. Notre projet, encadré par la Société Générale, vise à implémenter et évaluer différentes méthodes de quantification de l'incertitude des LLMs, en distinguant les approches \emph{white-box} (accès aux probabilités internes) des approches \emph{black-box} (sans accès aux logits). Depuis la première note d'étape (décembre 2025), nous avons considérablement élargi le périmètre du projet : nouveaux datasets, nouvelles méthodes, extension à la vision, et premiers résultats comparatifs.
+Les Large Language Models (LLMs) génèrent des réponses textuelles fluides mais sans indication de leur degré de confiance. Notre projet, encadré par la Société Générale, vise à implémenter et évaluer différentes méthodes de quantification de l'incertitude des LLMs, en distinguant les approches \emph{white-box} (accès aux probabilités internes) des approches \emph{black-box} (sans accès aux logits). Depuis la première note d'étape (décembre 2025), nous avons considérablement élargi le périmètre du projet : nouveaux datasets, nouvelles méthodes, étude du lien entre confiance et proximité à la vérité, et premiers résultats comparatifs.
 % =============================================================================
 \section{Travail réalisé depuis la note d'étape 1}
 % =============================================================================
@@ -31,8 +31,8 @@ Les Large Language Models (LLMs) génèrent des réponses textuelles fluides mai
 Nous avons enrichi notre base d'évaluation au-delà de MMLU et GSM8K avec trois nouveaux datasets :
 \begin{itemize}[nosep]
     \item \textbf{ELI5} (\emph{Explain Like I'm 5}) : questions ouvertes nécessitant des réponses longues explicatives. Ce dataset permet d'évaluer l'incertitude sur des générations en texte libre, contrairement aux QCM.
-    \item \textbf{TriviaQA} : questions factuelles avec réponses courtes. Idéal pour mesurer si les tokens les plus incertains correspondent aux éléments informatifs de la réponse.
-    \item \textbf{MIDV2020} : un dataset contenant différents documents d'identité provenant de différents pays, une ouverture à la classification d'images.
+    \item \textbf{TriviaQA} : questions factuelles avec réponses courtes. Utilisé d'une part pour mesurer l'importance des tokens, et d'autre part, en filtrant les questions à réponse numérique, pour l'étude du lien entre confiance et proximité à la vérité.
+
 \end{itemize}
 \subsection{Nouvelles méthodes implémentées}
 Au-delà des méthodes white-box (log-probabilités) et SelfCheckGPT implémentées lors de la première phase, nous avons développé quatre nouvelles approches :
@@ -43,16 +43,16 @@ Pour chaque question, nous générons $K=5$ réponses avec température élevée
 \end{equation}
 où $\bar{\ell}_r$ désigne la log-probabilité moyenne (normalisée par la longueur) de la réponse $r$. Une entropie sémantique nulle indique que toutes les réponses sont équivalentes (haute confiance), tandis qu'une valeur élevée signale des réponses sémantiquement divergentes.
 \paragraph{Prédiction conforme (LAC et APS).}
-Nous avons implémenté deux méthodes de prédiction conforme sur MMLU : \emph{Least Ambiguous set-valued Classifier} (LAC) et \emph{Adaptive Prediction Sets} (APS). Pour un taux d'erreur nominal $\alpha$, ces méthodes construisent des ensembles de prédiction $C(X_t)$ garantissant $P(Y_t \in C(X_t)) \geq 1-\alpha$. Le protocole divise les données en deux (50\% calibration, 50\% test), calcule un quantile $\hat{q}$ sur les scores de non-conformité, puis construit les ensembles sur le jeu de test. Cette méthode repose sur l'hypothèse d'\emph{échangeabilité} des données (les paires $(X_i, Y_i)$ sont i.i.d.), ce qui est raisonnable car les questions MMLU sont indépendantes.
+Nous avons implémenté deux méthodes de prédiction conforme sur MMLU : \emph{Least Ambiguous set-valued Classifier} (LAC) et \emph{Adaptive Prediction Sets} (APS). Pour un taux d'erreur nominal $\alpha$, ces méthodes construisent des ensembles de prédiction $C(X_t)$ garantissant $P(Y_t \in C(X_t)) \geq 1-\alpha$. Le protocole divise les données en deux (50\% calibration, 50\% test), calcule un quantile $\hat{q}$ sur les scores de non-conformité, puis construit les ensembles sur le jeu de test.
 \paragraph{Importance des tokens par perplexité et similarité cosinus.}
 Sur TriviaQA, nous avons développé deux méthodes d'attribution d'importance aux tokens :
 \begin{itemize}[nosep]
     \item \emph{Perplexity importance} : $\text{imp}(t) = -\log p(t)$, les tokens de faible probabilité sont les plus informatifs.
-    \item \emph{Cosine importance} : $\text{imp}(t) = 1 - \cos(\vec{v}_{\text{full}}, \vec{v}_{\setminus t})$, où $\vec{v}_{\text{full}}$ est le vecteur moyen des distributions top-$k$ sur toutes les positions et $\vec{v}_{\setminus t}$ le même vecteur calculé en excluant la position du token $t$. Les tokens dont le retrait modifie le plus le profil global sont les plus importants.
+    \item \emph{Cosine importance} : $\text{imp}(t) = 1 - \cos(\vec{v}_{\text{full}}, \vec{v}_{\setminus t})$, où $\vec{v}_{\text{full}}$ est le vecteur moyen des distributions top-$k$ sur toutes les positions et $\vec{v}_{\setminus t}$ le même vecteur calculé en excluant la position du token $t$.
 \end{itemize}
 Ces méthodes sont évaluées aux niveaux token et mot, avec comparaison aux vérités du dataset.
-\paragraph{Pipeline de classification d'images avec incertitude.}
-Pour le cas d'usage vision (classification sur documents d'identité), nous avons implémenté trois méthodes d'incertitude sur les logits de réseaux ResNet pré-entraînés : entropie de Shannon sur la distribution softmax, perplexité adaptée (log-probabilité de la classe prédite), et prédiction conforme avec garantie de couverture.
+\paragraph{Lien confiance--proximité à la vérité.}
+Sur un sous-ensemble de TriviaQA filtré aux questions à réponse numérique ($n=3\,395$), nous avons étudié la relation entre différents scores de confiance (verbalisée, jugement externe, log-probabilités) et la distance à la vérité terrain, mesurée par erreur absolue, relative et logarithmique (cf.\ section~\ref{sec:confiance_verite}).
 % =============================================================================
 \section{Méthodologie}
 % =============================================================================
@@ -69,98 +69,95 @@ Nous comparons plusieurs signaux extraits des log-probabilités :
 \end{itemize}
 \subsection{Méthodes black-box}
 \begin{itemize}[nosep]
-    \item \textbf{SelfCheckGPT} : pour chaque phrase de la réponse, un juge LLM vérifie sa cohérence avec $K$ passages alternatifs générés pour la même question. Score $\in [0,1]$ : 0 = fiable, 1 = contredit. Cette méthode ne requiert aucun accès aux logits et est donc applicable à tout LLM, y compris via API fermée.
+    \item \textbf{SelfCheckGPT} : pour chaque phrase de la réponse, un juge LLM vérifie sa cohérence avec $K$ passages alternatifs générés pour la même question. Score $\in [0,1]$ : 0 = fiable, 1 = contredit.
 \end{itemize}
 \subsection{Évaluation des méthodes}
-Pour comparer les signaux de confiance, nous utilisons des courbes \emph{accuracy vs coverage} : en ne retenant que les réponses les plus confiantes (par un signal donné), l'accuracy devrait augmenter si le signal est discriminant. Nous mesurons également : le score de Brier, l'ECE (\emph{Expected Calibration Error}), l'AUROC et l'AUPRC. La prédiction conforme est évaluée par sa couverture empirique (devant dépasser $1-\alpha$) et la taille moyenne des ensembles de prédiction (plus petite = plus informative).
+Pour comparer les signaux de confiance, nous utilisons des courbes \emph{accuracy vs coverage} : en ne retenant que les réponses les plus confiantes, l'accuracy devrait augmenter si le signal est discriminant. Nous mesurons également : le score de Brier, l'ECE (\emph{Expected Calibration Error}), l'AUROC et l'AUPRC. La prédiction conforme est évaluée par sa couverture empirique et la taille moyenne des ensembles de prédiction.
 % =============================================================================
 \section{Statistiques descriptives}
 % =============================================================================
 \subsection{MMLU}
-Les statistiques descriptives de MMLU (15\,858 questions, 57 sujets) ont été présentées dans la note d'étape 1. Rappelons que le biais de position des réponses correctes vers D (26,7\%) a été corrigé par un shuffle systématique des choix. Pour l'évaluation comparative des méthodes d'incertitude, nous travaillons sur un sous-ensemble de 107 questions disposant de logits complets A/B/C/D et de confiance déclarée, permettant une comparaison appariée stricte.
+Les statistiques descriptives de MMLU (15\,858 questions, 57 sujets) ont été présentées dans la note d'étape 1. Pour l'évaluation comparative des méthodes d'incertitude, nous travaillons sur un sous-ensemble de 107 questions disposant de logits complets A/B/C/D et de confiance déclarée, permettant une comparaison appariée stricte.
 \subsection{ELI5}
-100 questions ELI5 traitées par Gemini~2.0 Flash produisent des réponses de 3 à 5~phrases. La perplexité par phrase ($\text{PPL} = \exp(-\bar{\ell})$) et l'entropie top-$k$ (entropie de Shannon sur les 5 candidats les plus probables à chaque position) sont calculées pour chaque phrase. La figure~\ref{fig:eli5_distributions} montre les distributions de ces deux signaux : la perplexité médiane par phrase est de 1,31 (distribution asymétrique à droite avec quelques phrases très incertaines dépassant 2,0), tandis que l'entropie top-$k$ médiane est de 0,52, avec une distribution plus symétrique.
+100 questions ELI5 traitées par Gemini~2.0 Flash produisent des réponses de 3 à 5~phrases. La perplexité médiane par phrase est de 1,31 (distribution asymétrique à droite), tandis que l'entropie top-$k$ médiane est de 0,52. L'entropie sémantique, calculée à partir de $K=5$ réponses par question, présente une distribution fortement bimodale (figure~\ref{fig:se_distrib}) : 51 questions ont une SE nulle (toutes les réponses sémantiquement équivalentes), tandis que les autres se répartissent entre 0,4 et 1,6. Un juge LLM attribue un score de qualité $\geq 4$ à 82\% des réponses.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/sentence_distributions.png}
-    \caption{Distributions de la perplexité par phrase (gauche) et de l'entropie top-$k$ par phrase (droite) sur 100 questions ELI5.}
-    \label{fig:eli5_distributions}
-\end{figure}
-
-L'entropie sémantique, calculée à partir de $K=5$ réponses par question, présente une distribution fortement bimodale (figure~\ref{fig:se_distrib}) : 51 questions ont une SE nulle (toutes les réponses sémantiquement équivalentes), tandis que les autres se répartissent entre 0,4 et 1,6 (moyenne = 0,35, médiane = 0,00).
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{figures/semantic_entropy_distribution.png}
+    \includegraphics[width=0.55\textwidth]{figures/semantic_entropy_distribution.png}
     \caption{Distribution de l'entropie sémantique sur 100 questions ELI5.}
     \label{fig:se_distrib}
 \end{figure}
 
-Un juge LLM évalue la qualité des réponses (accuracy, simplicité, pertinence sur une échelle de 1 à 5). Sur 100 questions, 42 obtiennent le score maximal de 5, 40 un score de 4, et seules 4 un score de 1, confirmant la qualité globalement élevée des réponses du modèle.
 \subsection{TriviaQA}
-100 questions TriviaQA avec réponses courtes. Le modèle atteint un taux de justesse de 87\% selon le juge LLM (87 correctes, 13 incorrectes). L'analyse porte sur la comparaison entre les tokens identifiés comme importants par nos méthodes (perplexité et similarité cosinus, aux niveaux token et mot) et les tokens de la réponse correcte.
+100 questions TriviaQA avec réponses courtes. Le modèle atteint un taux de justesse de 87\% selon le juge LLM. L'analyse porte d'une part sur la comparaison entre les tokens identifiés comme importants par nos méthodes et les tokens de la réponse correcte, et d'autre part, pour l'étude confiance--proximité (section~\ref{sec:confiance_verite}), sur un sous-ensemble de 3\,395 questions à réponse numérique, permettant de définir des distances interprétables entre la réponse du modèle et la vérité terrain.
 % =============================================================================
 \section{Premiers résultats}
 % =============================================================================
 \subsection{Comparaison des signaux de confiance sur MMLU}
-Sur les 107 questions appariées, nous comparons les courbes accuracy-coverage des différents signaux (figure~\ref{fig:acc_cov}). Les signaux basés sur les log-probabilités surpassent nettement la confiance déclarée : en sélectionnant les 10\% de questions les plus confiantes, l'accuracy atteint 81,8\% avec les logprobs contre 72,7\% avec la confiance déclarée. Pour les 50\% les plus confiantes, l'écart se creuse davantage (75,9\% vs 51,9\%).
+Sur les 107 questions appariées, nous comparons les courbes accuracy-coverage des différents signaux (figure~\ref{fig:acc_cov}). Les signaux basés sur les log-probabilités surpassent nettement la confiance déclarée : en sélectionnant les 10\% de questions les plus confiantes, l'accuracy atteint 81,8\% avec les logprobs contre 72,7\% avec la confiance déclarée. Pour les 50\% les plus confiantes, l'écart se creuse davantage (75,9\% vs 51,9\%). La figure~\ref{fig:distributions} confirme ce résultat : les distributions de confiance basées sur les logprobs séparent bien les réponses correctes des incorrectes, tandis que les distributions déclarées se chevauchent fortement.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{figures/fig2_accuracy_coverage_paired.png}
-    \caption{Courbes accuracy vs couverture sur MMLU (107 questions appariées). Les signaux issus des logprobs (traits pleins) dominent ceux issus de la confiance déclarée (traits pointillés).}
+    \includegraphics[width=0.70\textwidth]{figures/fig2_accuracy_coverage_paired.png}
+    \caption{Courbes accuracy vs couverture sur MMLU (107 questions appariées).}
     \label{fig:acc_cov}
 \end{figure}
-
-La figure~\ref{fig:distributions} confirme ce résultat : les distributions de confiance basées sur les logprobs séparent bien les réponses correctes (concentrées à droite) des incorrectes, tandis que les distributions déclarées se chevauchent fortement.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{figures/fig5_confidence_distributions.png}
-    \caption{Distributions des scores de confiance pour les réponses correctes vs incorrectes, selon la source du signal (logprobs en haut, déclarée en bas).}
+    \caption{Distributions des scores de confiance pour réponses correctes vs incorrectes.}
     \label{fig:distributions}
 \end{figure}
 
 \paragraph{Prédiction conforme.}
-Les garanties de couverture sont respectées empiriquement (figure~\ref{fig:conformal}). Pour $\alpha = 0{,}05$, LAC atteint une couverture de 96,2\% (cible : 95\%) avec une taille moyenne d'ensemble de 3,2, tandis qu'APS atteint 100\% avec des ensembles de taille 4,0. Pour $\alpha = 0{,}1$, LAC donne une couverture de 96,2\% (taille 3,1) et APS 92,5\% (taille 2,9). APS tend à être plus conservateur mais fournit des garanties plus stables.
+Les garanties de couverture sont respectées empiriquement (figure~\ref{fig:conformal}). Pour $\alpha = 0{,}05$, LAC atteint une couverture de 96,2\% (cible : 95\%) avec une taille moyenne d'ensemble de 3,2, tandis qu'APS atteint 100\% avec des ensembles de taille 4,0. APS tend à être plus conservateur mais fournit des garanties plus stables.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/fig3_conformal_prediction.png}
-    \caption{Prédiction conforme sur MMLU : couverture empirique vs $\alpha$ (gauche) et taille moyenne d'ensemble vs $\alpha$ (droite) pour LAC et APS.}
+    \caption{Prédiction conforme sur MMLU : couverture et taille d'ensemble vs $\alpha$.}
     \label{fig:conformal}
 \end{figure}
 
 \subsection{Incertitude sur les réponses longues (ELI5)}
-L'analyse sur ELI5 révèle que l'entropie sémantique est anti-corrélée avec la qualité des réponses (Spearman $r = -0{,}173$, $p = 0{,}08$) : les questions à SE nulle (réponses toutes sémantiquement équivalentes) obtiennent les meilleurs scores d'accuracy. Le score SelfCheckGPT confirme cette tendance : les réponses de score 1 (pire qualité) ont un SelfCheck médian de 0,77 (forte incohérence), contre environ 0,48 pour les scores 4--5. La corrélation est cependant plus faible (Spearman $r = -0{,}069$, $p = 0{,}50$), suggérant que SelfCheckGPT capte un signal complémentaire mais plus bruité.
-
-La figure~\ref{fig:eli5_coverage} montre les courbes accuracy-coverage pour les différents signaux. À faible couverture (10\%), l'entropie sémantique atteint 100\% d'accuracy et SelfCheck 100\% également, contre une baseline globale de 82\%. Le signal combiné (moyenne des confiances normalisées) offre un bon compromis sur l'ensemble de la courbe, restant au-dessus de la baseline pour toutes les couvertures. L'entropie sémantique chute cependant fortement autour de 40\% de couverture (77\%), révélant sa sensibilité au seuil de couverture.
+L'analyse sur ELI5 révèle que l'entropie sémantique est anti-corrélée avec la qualité des réponses (Spearman $r = -0{,}173$, $p = 0{,}08$) : les questions à SE nulle obtiennent les meilleurs scores d'accuracy. La figure~\ref{fig:eli5_coverage} montre les courbes accuracy-coverage : le signal combiné (moyenne des confiances normalisées) offre un bon compromis, restant au-dessus de la baseline pour toutes les couvertures.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{figures/eli5_accuracy_coverage.png}
-    \caption{Courbes accuracy vs couverture sur ELI5 pour les différents signaux d'incertitude.}
+    \caption{Courbes accuracy vs couverture sur ELI5.}
     \label{fig:eli5_coverage}
 \end{figure}
 
 \subsection{Importance des tokens sur TriviaQA}
-La figure~\ref{fig:hit_rate} compare les \emph{hit rates} des méthodes d'importance. L'analyse au niveau mot surpasse systématiquement celle au niveau token, et la similarité cosinus domine la perplexité.
+La figure~\ref{fig:hit_rate} compare les \emph{hit rates} des méthodes d'importance. L'analyse au niveau mot surpasse systématiquement celle au niveau token, et la similarité cosinus domine la perplexité. Un \emph{hit rate} autour de 85\% pour la similarité cosinus montre que cette méthode est efficace pour localiser l'information clé au sein d'une phrase.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/judge_hit_rate.png}
-    \caption{Hit rates des méthodes d'importance sur TriviaQA : comparaison substring matching vs juge LLM, pour les réponses correctes (gauche) et incorrectes (droite).}
+    \includegraphics[width=0.55\textwidth]{figures/judge_hit_rate.png}
+    \caption{Hit rates des méthodes d'importance sur TriviaQA.}
     \label{fig:hit_rate}
 \end{figure}
+
+\subsection{Lien entre confiance et proximité à la vérité}
+\label{sec:confiance_verite}
+Cette analyse, menée sur le sous-ensemble de TriviaQA à réponses numériques ($n=3\,395$, accuracy $\approx 86\%$), étudie si un score de confiance élevé implique une réponse plus proche de la vérité terrain. La distance est mesurée par l'erreur absolue $|\hat{y}_i - y_i|$, l'erreur relative $|\hat{y}_i - y_i|/(|y_i|+\varepsilon)$ et l'erreur logarithmique $|\log \hat{y}_i - \log y_i|$.
+
+Plusieurs scores de confiance sont comparés : la \emph{confiance verbalisée} (le modèle annonce lui-même un score $\in [0,1]$), la \emph{confiance par jugement externe} (un second LLM évalue la plausibilité), et des scores fondés sur les log-probabilités internes (probabilité jointe, moyenne géométrique, perplexité, probabilité minimale), calculés soit sur l'ensemble de la génération, soit restreints aux tokens de la réponse numérique.
+
+\paragraph{Discrimination et calibration.}
+Les scores fondés sur les log-probabilités des tokens de la réponse obtiennent les meilleures AUC (0,84--0,86), devant la confiance verbalisée et le jugement externe (AUC $\approx 0{,}68$--$0{,}72$), et loin devant les métriques calculées sur l'ensemble de la génération (AUC $\approx 0{,}60$--$0{,}63$). Tous les scores présentent une surconfiance systématique : les moyennes de confiance (0,91--0,99) dépassent l'accuracy empirique (0,86), avec des scores de Brier entre 0,11 et 0,21.
+
+\paragraph{Corrélation confiance--distance.}
+Sur l'ensemble des réponses, la corrélation de Spearman entre confiance et distance à la vérité est négative (les réponses plus confiantes sont plus proches de la vérité). Les corrélations les plus fortes proviennent des log-probabilités restreintes aux tokens de la réponse (Spearman $\approx -0{,}49$), suivies de la confiance verbalisée et du jugement externe ($\approx -0{,}27$). Cependant, lorsqu'on restreint l'analyse aux seules réponses incorrectes ($n=463$), les corrélations chutent fortement (Spearman $\approx -0{,}13$ à $-0{,}22$ pour les meilleurs signaux), indiquant que la confiance permet surtout de séparer réponses correctes et incorrectes, mais quantifie mal l'amplitude de l'erreur parmi les réponses fausses. Les résultats sont robustes au choix de la mesure de distance.
 
 % =============================================================================
 \section{Perspectives pour le mémoire final}
 % =============================================================================
 La suite du projet s'articulera autour de trois axes :
 \begin{enumerate}[nosep]
-    \item \textbf{Consolidation des résultats quantitatifs.} Augmenter le nombre de questions traitées sur ELI5 et TriviaQA, produire des tables de métriques complètes (Brier, ECE, AUROC, AUPRC) pour chaque combinaison méthode$\times$dataset, et effectuer des tests de significativité statistique.
-    \item \textbf{Évaluation du pipeline vision.} Entraîner (ou fine-tuner) les modèles ResNet sur le dataset MIDV2020, calibrer les méthodes d'incertitude (temperature scaling), et évaluer leur capacité à détecter les cas de classification incertains.
+    \item \textbf{Consolidation des résultats quantitatifs.} Augmenter le nombre de questions traitées sur ELI5 et TriviaQA, produire des tables de métriques complètes pour chaque combinaison méthode$\times$dataset, et effectuer des tests de significativité statistique.
     \item \textbf{Construction d'un score d'incertitude composite.} Proposer une méthode de fusion des différents signaux (white-box et black-box) pour construire un score global, et évaluer sa performance sur les différents datasets.
     \item \textbf{Synthèse comparative et recommandations.} Formaliser une comparaison systématique white-box vs black-box selon les axes coût computationnel, qualité de calibration et applicabilité pratique.
 \end{enumerate}
