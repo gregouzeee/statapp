@@ -32,10 +32,9 @@ logging.basicConfig(
     datefmt="%H:%M:%S",
 )
 # Silence noisy library loggers
-logging.getLogger("httpx").setLevel(logging.WARNING)
-logging.getLogger("httpcore").setLevel(logging.WARNING)
-logging.getLogger("google").setLevel(logging.WARNING)
-logging.getLogger("urllib3").setLevel(logging.WARNING)
+for name in logging.root.manager.loggerDict:
+    if name != "wepr":
+        logging.getLogger(name).setLevel(logging.ERROR)
 
 log = logging.getLogger("wepr")
 
