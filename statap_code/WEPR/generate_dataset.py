@@ -13,6 +13,7 @@ Usage:
 import argparse
 import asyncio
 import json
+import logging
 import os
 import threading
 import time
@@ -23,6 +24,12 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from tqdm import tqdm
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%H:%M:%S",
+)
 
 
 # ──────────────────────────── Defaults ────────────────────────────
@@ -97,9 +104,11 @@ def process_one(client, item, args) -> dict:
 
     prompt = make_prompt(question)
 
+    log = logging.getLogger("worker")
     resp = None
     last_err = None
     for attempt in range(1, DEFAULT_MAX_RETRIES + 1):
+        t0 = time.monotonic()
         try:
             resp = client.models.generate_content(
                 model=args.model,
@@ -112,18 +121,27 @@ def process_one(client, item, args) -> dict:
                     candidate_count=1,
                 ),
             )
+            elapsed = time.monotonic() - t0
+            log.debug(f"[{qid}] OK in {elapsed:.2f}s")
             break
         except Exception as e:
+            elapsed = time.monotonic() - t0
             last_err = str(e)
             if any(fatal in last_err for fatal in
                    ["Credentials", "credentials", "BILLING",
                     "PERMISSION_DENIED", "limit: 0"]):
+                log.error(f"[{qid}] FATAL error: {last_err}")
                 raise
-            # Exponential backoff, longer on rate limit
-            if "429" in last_err or "RESOURCE_EXHAUSTED" in last_err:
-                time.sleep(min(5.0 * attempt, 30.0))
+            is_rate_limit = "429" in last_err or "RESOURCE_EXHAUSTED" in last_err
+            if is_rate_limit:
+                wait = min(5.0 * attempt, 30.0)
+                log.warning(f"[{qid}] RATE LIMITED (attempt {attempt}/{DEFAULT_MAX_RETRIES}, "
+                            f"took {elapsed:.2f}s). Waiting {wait:.0f}s...")
             else:
-                time.sleep(min(2.0 * attempt, 10.0))
+                wait = min(2.0 * attempt, 10.0)
+                log.warning(f"[{qid}] ERROR (attempt {attempt}/{DEFAULT_MAX_RETRIES}, "
+                            f"took {elapsed:.2f}s): {last_err[:100]}. Waiting {wait:.0f}s...")
+            time.sleep(wait)
 
     if resp is None:
         return {
@@ -237,6 +255,11 @@ def main():
             pbar.update(1)
 
     async def run_all():
+        log = logging.getLogger("main")
+        batch_num = 0
+        rate_limits_total = 0
+        errors_total = 0
+
         with open(OUT_JSONL, "a", encoding="utf-8") as fout:
             pbar = tqdm(desc="Generating", unit="q", total=total)
             tasks = []
@@ -248,10 +271,24 @@ def main():
                 tasks.append(process_async(item, fout, pbar))
                 # Launch in batches to avoid buffering too many items from the stream
                 if len(tasks) >= args.concurrency * 2:
+                    batch_num += 1
+                    batch_size = len(tasks)
+                    t0 = time.monotonic()
                     await asyncio.gather(*tasks)
+                    elapsed = time.monotonic() - t0
+                    qps = batch_size / elapsed if elapsed > 0 else 0
+                    log.info(f"Batch {batch_num}: {batch_size} questions in {elapsed:.1f}s "
+                             f"({qps:.1f} q/s)")
                     tasks = []
             if tasks:
+                batch_num += 1
+                batch_size = len(tasks)
+                t0 = time.monotonic()
                 await asyncio.gather(*tasks)
+                elapsed = time.monotonic() - t0
+                qps = batch_size / elapsed if elapsed > 0 else 0
+                log.info(f"Batch {batch_num} (final): {batch_size} questions in {elapsed:.1f}s "
+                         f"({qps:.1f} q/s)")
             pbar.close()
 
     asyncio.run(run_all())
