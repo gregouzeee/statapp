@@ -7,11 +7,12 @@ the full top-K log-probabilities at each token position.
 This is the data needed to train and evaluate WEPR.
 
 Usage:
-    python generate_dataset.py [--num_questions 1000] [--logprobs_k 10] [--concurrency 8]
+    python generate_dataset.py [--num_questions 1000] [--logprobs_k 10] [--concurrency 30]
 """
 
 import argparse
 import asyncio
+import itertools
 import json
 import logging
 import os
@@ -44,7 +45,20 @@ DEFAULT_MAX_OUTPUT_TOKENS = 128
 DEFAULT_TEMPERATURE = 1.0  # T=1.0 comme dans l'article EPR
 DEFAULT_NUM_QUESTIONS = 0  # 0 = all available questions
 DEFAULT_MAX_RETRIES = 5
-DEFAULT_CONCURRENCY = 5
+DEFAULT_CONCURRENCY = 30  # 3 per region × 10 regions
+
+REGIONS = [
+    "us-central1",
+    "us-east1",
+    "us-east4",
+    "us-west1",
+    "us-west4",
+    "us-south1",
+    "us-east5",
+    "europe-west1",
+    "europe-west4",
+    "europe-west9",
+]
 
 OUT_DIR = Path(__file__).resolve().parent / "data"
 OUT_JSONL = OUT_DIR / "triviaqa_topk.jsonl"
@@ -92,35 +106,43 @@ def extract_token_logprobs(resp) -> List[Dict]:
     return tokens
 
 
-# ──────────── Rate limit tracker ───────────────
+# ──────────── Rate limit tracker (per region) ───────────────
 
 class RateLimitTracker:
-    """Track rate limit hits and dynamically back off globally."""
+    """Track rate limit hits globally and per region."""
     def __init__(self):
         self.lock = threading.Lock()
         self.hits = 0
-        self.last_hit_time = 0.0
+        self.per_region = {}
+        self.last_hit_time = {}  # region -> monotonic time
 
-    def record_hit(self):
+    def record_hit(self, region: str):
         with self.lock:
             self.hits += 1
-            self.last_hit_time = time.monotonic()
+            self.per_region[region] = self.per_region.get(region, 0) + 1
+            self.last_hit_time[region] = time.monotonic()
 
-    def seconds_since_last_hit(self) -> float:
+    def seconds_since_last_hit(self, region: str) -> float:
         with self.lock:
-            if self.last_hit_time == 0:
+            t = self.last_hit_time.get(region, 0)
+            if t == 0:
                 return float("inf")
-            return time.monotonic() - self.last_hit_time
+            return time.monotonic() - t
 
     @property
     def total_hits(self):
         with self.lock:
             return self.hits
 
+    def summary(self) -> str:
+        with self.lock:
+            parts = [f"{r}: {c}" for r, c in sorted(self.per_region.items()) if c > 0]
+            return ", ".join(parts) if parts else "none"
+
 
 # ──────────── Single question processing ───────────────
 
-def process_one(client, item, args, rate_tracker: RateLimitTracker) -> dict:
+def process_one(client, item, args, rate_tracker: RateLimitTracker, region: str) -> dict:
     """Process a single question: call Gemini, extract logprobs, return result dict."""
     qid = item["question_id"]
     question = item["question"]
@@ -137,12 +159,11 @@ def process_one(client, item, args, rate_tracker: RateLimitTracker) -> dict:
     resp = None
     last_err = None
     for attempt in range(1, DEFAULT_MAX_RETRIES + 1):
-        # If we got rate-limited recently, wait before even trying
-        since_last = rate_tracker.seconds_since_last_hit()
+        # If this region got rate-limited recently, wait
+        since_last = rate_tracker.seconds_since_last_hit(region)
         if since_last < 2.0:
             time.sleep(2.0 - since_last)
 
-        t0 = time.monotonic()
         try:
             resp = client.models.generate_content(
                 model=args.model,
@@ -157,7 +178,6 @@ def process_one(client, item, args, rate_tracker: RateLimitTracker) -> dict:
             )
             break
         except Exception as e:
-            elapsed = time.monotonic() - t0
             last_err = str(e)
             if any(fatal in last_err for fatal in
                    ["Credentials", "credentials", "BILLING",
@@ -166,20 +186,14 @@ def process_one(client, item, args, rate_tracker: RateLimitTracker) -> dict:
                 raise
             is_rate_limit = "429" in last_err or "RESOURCE_EXHAUSTED" in last_err
             if is_rate_limit:
-                rate_tracker.record_hit()
+                rate_tracker.record_hit(region)
                 wait = min(5.0 * attempt, 30.0)
-                # Log full error on first hit to capture quota details
-                if rate_tracker.total_hits <= 3:
-                    log.warning(f"429 RATE LIMITED (attempt {attempt}/{DEFAULT_MAX_RETRIES}). "
-                                f"Full error:\n{last_err}\n"
-                                f"Waiting {wait:.0f}s...")
-                else:
-                    log.warning(f"429 RATE LIMITED (attempt {attempt}/{DEFAULT_MAX_RETRIES}). "
-                                f"Waiting {wait:.0f}s... [total 429s: {rate_tracker.total_hits}]")
+                log.warning(f"429 on {region} (attempt {attempt}/{DEFAULT_MAX_RETRIES}). "
+                            f"Waiting {wait:.0f}s... [total: {rate_tracker.total_hits}]")
             else:
                 wait = min(2.0 * attempt, 10.0)
-                log.warning(f"ERROR (attempt {attempt}/{DEFAULT_MAX_RETRIES}): "
-                            f"{last_err[:200]}. Waiting {wait:.0f}s...")
+                log.warning(f"ERROR on {region} (attempt {attempt}/{DEFAULT_MAX_RETRIES}): "
+                            f"{last_err[:150]}. Waiting {wait:.0f}s...")
             time.sleep(wait)
 
     if resp is None:
@@ -232,17 +246,22 @@ def main():
     parser.add_argument("--resume", action="store_true", default=True)
     parser.add_argument("--no-resume", dest="resume", action="store_false")
     parser.add_argument("--concurrency", type=int, default=DEFAULT_CONCURRENCY,
-                        help="Number of parallel API calls (default: 8)")
+                        help="Total parallel API calls across all regions (default: 30)")
     args = parser.parse_args()
 
     load_dotenv()
 
     project = os.getenv("GCP_PROJECT")
-    location = os.getenv("GCP_LOCATION", "us-central1")
     if not project:
         raise RuntimeError("GCP_PROJECT not found in .env")
 
-    client = genai.Client(vertexai=True, project=project, location=location)
+    # Create one client per region
+    clients = {}
+    for region in REGIONS:
+        clients[region] = genai.Client(vertexai=True, project=project, location=region)
+    region_cycle = itertools.cycle(REGIONS)
+
+    log.info(f"Using {len(REGIONS)} regions: {', '.join(REGIONS)}")
 
     # Load TriviaQA (streaming — never loads everything in RAM)
     from datasets import load_dataset
@@ -275,18 +294,19 @@ def main():
                     continue
         print(f"Already processed: {len(done)} questions. Resuming...")
 
-    print(f"Concurrency: {args.concurrency} parallel requests")
+    print(f"Concurrency: {args.concurrency} parallel requests across {len(REGIONS)} regions")
 
     # Shared state
     write_lock = threading.Lock()
     rate_tracker = RateLimitTracker()
     semaphore = asyncio.Semaphore(args.concurrency)
 
-    async def process_async(item, fout, pbar):
+    async def process_async(item, fout, pbar, region):
         async with semaphore:
+            client = clients[region]
             loop = asyncio.get_event_loop()
             result = await loop.run_in_executor(
-                None, process_one, client, item, args, rate_tracker
+                None, process_one, client, item, args, rate_tracker, region
             )
             line = json.dumps(result, ensure_ascii=False) + "\n"
             with write_lock:
@@ -307,7 +327,8 @@ def main():
                 if args.resume and qid in done:
                     pbar.update(1)
                     continue
-                tasks.append(process_async(item, fout, pbar))
+                region = next(region_cycle)
+                tasks.append(process_async(item, fout, pbar, region))
                 # Launch in batches
                 if len(tasks) >= args.concurrency * 2:
                     batch_num += 1
@@ -340,6 +361,7 @@ def main():
         log.info(f"Finished {processed} questions in {total_elapsed:.0f}s "
                  f"(avg {processed/total_elapsed:.1f} q/s, "
                  f"{rate_tracker.total_hits} rate limits)")
+        log.info(f"429s per region: {rate_tracker.summary()}")
 
     asyncio.run(run_all())
 
