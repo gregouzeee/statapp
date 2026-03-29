@@ -7,12 +7,14 @@ the full top-K log-probabilities at each token position.
 This is the data needed to train and evaluate WEPR.
 
 Usage:
-    python generate_dataset.py [--num_questions 1000] [--logprobs_k 10]
+    python generate_dataset.py [--num_questions 1000] [--logprobs_k 10] [--concurrency 10]
 """
 
 import argparse
+import asyncio
 import json
 import os
+import threading
 import time
 from pathlib import Path
 from typing import Dict, List
@@ -31,6 +33,7 @@ DEFAULT_MAX_OUTPUT_TOKENS = 128
 DEFAULT_TEMPERATURE = 1.0  # T=1.0 comme dans l'article EPR
 DEFAULT_NUM_QUESTIONS = 0  # 0 = all available questions
 DEFAULT_MAX_RETRIES = 5
+DEFAULT_CONCURRENCY = 10
 
 OUT_DIR = Path(__file__).resolve().parent / "data"
 OUT_JSONL = OUT_DIR / "triviaqa_topk.jsonl"
@@ -78,6 +81,84 @@ def extract_token_logprobs(resp) -> List[Dict]:
     return tokens
 
 
+# ──────────── Single question processing ───────────────
+
+def process_one(client, item, args) -> dict:
+    """Process a single question: call Gemini, extract logprobs, return result dict."""
+    qid = item["question_id"]
+    question = item["question"]
+    answer_obj = item["answer"]
+    ground_truths = []
+    if answer_obj.get("value"):
+        ground_truths.append(answer_obj["value"])
+    ground_truths.extend(answer_obj.get("aliases", []))
+    ground_truths.extend(answer_obj.get("normalized_aliases", []))
+    ground_truths = list(dict.fromkeys(ground_truths))
+
+    prompt = make_prompt(question)
+
+    resp = None
+    last_err = None
+    for attempt in range(1, DEFAULT_MAX_RETRIES + 1):
+        try:
+            resp = client.models.generate_content(
+                model=args.model,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=args.temperature,
+                    max_output_tokens=args.max_output_tokens,
+                    response_logprobs=True,
+                    logprobs=args.logprobs_k,
+                    candidate_count=1,
+                ),
+            )
+            break
+        except Exception as e:
+            last_err = str(e)
+            if any(fatal in last_err for fatal in
+                   ["Credentials", "credentials", "BILLING",
+                    "PERMISSION_DENIED", "limit: 0"]):
+                raise
+            # Exponential backoff, longer on rate limit
+            if "429" in last_err or "RESOURCE_EXHAUSTED" in last_err:
+                time.sleep(min(5.0 * attempt, 30.0))
+            else:
+                time.sleep(min(2.0 * attempt, 10.0))
+
+    if resp is None:
+        return {
+            "question_id": qid,
+            "question": question,
+            "ground_truths": ground_truths,
+            "error": last_err,
+            "model": args.model,
+        }
+
+    full_answer = (resp.text or "").strip()
+    token_data = extract_token_logprobs(resp)
+
+    if not token_data:
+        return {
+            "question_id": qid,
+            "question": question,
+            "ground_truths": ground_truths,
+            "full_answer": full_answer,
+            "error": "no logprobs returned",
+            "model": args.model,
+        }
+
+    return {
+        "question_id": qid,
+        "question": question,
+        "ground_truths": ground_truths,
+        "full_answer": full_answer,
+        "model": args.model,
+        "logprobs_k": args.logprobs_k,
+        "temperature": args.temperature,
+        "token_data": token_data,
+    }
+
+
 # ──────────────────────────── Main ──────────────────────────────
 
 def main():
@@ -93,6 +174,8 @@ def main():
     parser.add_argument("--max_output_tokens", type=int, default=DEFAULT_MAX_OUTPUT_TOKENS)
     parser.add_argument("--resume", action="store_true", default=True)
     parser.add_argument("--no-resume", dest="resume", action="store_false")
+    parser.add_argument("--concurrency", type=int, default=DEFAULT_CONCURRENCY,
+                        help="Number of parallel API calls")
     args = parser.parse_args()
 
     load_dotenv()
@@ -135,102 +218,56 @@ def main():
                     continue
         print(f"Already processed: {len(done)} questions. Resuming...")
 
-    # Main loop
-    with open(OUT_JSONL, "a", encoding="utf-8") as fout:
-        for item in tqdm(ds, desc="Generating", unit="q", total=total):
-            qid = item["question_id"]
-            if args.resume and qid in done:
-                continue
+    print(f"Concurrency: {args.concurrency} parallel requests")
 
-            question = item["question"]
-            answer_obj = item["answer"]
-            ground_truths = []
-            if answer_obj.get("value"):
-                ground_truths.append(answer_obj["value"])
-            ground_truths.extend(answer_obj.get("aliases", []))
-            ground_truths.extend(answer_obj.get("normalized_aliases", []))
-            ground_truths = list(dict.fromkeys(ground_truths))
+    # File write lock (threads write results concurrently)
+    write_lock = threading.Lock()
 
-            prompt = make_prompt(question)
+    # Semaphore to limit concurrency
+    semaphore = asyncio.Semaphore(args.concurrency)
 
-            # Call Gemini with retry
-            resp = None
-            last_err = None
-            for attempt in range(1, DEFAULT_MAX_RETRIES + 1):
-                try:
-                    resp = client.models.generate_content(
-                        model=args.model,
-                        contents=prompt,
-                        config=types.GenerateContentConfig(
-                            temperature=args.temperature,
-                            max_output_tokens=args.max_output_tokens,
-                            response_logprobs=True,
-                            logprobs=args.logprobs_k,
-                            candidate_count=1,
-                        ),
-                    )
-                    break
-                except Exception as e:
-                    last_err = str(e)
-                    if any(fatal in last_err for fatal in
-                           ["Credentials", "credentials", "BILLING",
-                            "PERMISSION_DENIED", "limit: 0"]):
-                        raise
-                    time.sleep(min(2.0 * attempt, 10.0))
-
-            if resp is None:
-                out = {
-                    "question_id": qid,
-                    "question": question,
-                    "ground_truths": ground_truths,
-                    "error": last_err,
-                    "model": args.model,
-                }
-                fout.write(json.dumps(out, ensure_ascii=False) + "\n")
+    async def process_async(item, fout, pbar):
+        async with semaphore:
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(None, process_one, client, item, args)
+            line = json.dumps(result, ensure_ascii=False) + "\n"
+            with write_lock:
+                fout.write(line)
                 fout.flush()
-                continue
+            pbar.update(1)
 
-            full_answer = (resp.text or "").strip()
-            token_data = extract_token_logprobs(resp)
+    async def run_all():
+        with open(OUT_JSONL, "a", encoding="utf-8") as fout:
+            pbar = tqdm(desc="Generating", unit="q", total=total)
+            tasks = []
+            for item in ds:
+                qid = item["question_id"]
+                if args.resume and qid in done:
+                    pbar.update(1)
+                    continue
+                tasks.append(process_async(item, fout, pbar))
+                # Launch in batches to avoid buffering too many items from the stream
+                if len(tasks) >= args.concurrency * 2:
+                    await asyncio.gather(*tasks)
+                    tasks = []
+            if tasks:
+                await asyncio.gather(*tasks)
+            pbar.close()
 
-            if not token_data:
-                out = {
-                    "question_id": qid,
-                    "question": question,
-                    "ground_truths": ground_truths,
-                    "full_answer": full_answer,
-                    "error": "no logprobs returned",
-                    "model": args.model,
-                }
-                fout.write(json.dumps(out, ensure_ascii=False) + "\n")
-                fout.flush()
-                continue
-
-            out = {
-                "question_id": qid,
-                "question": question,
-                "ground_truths": ground_truths,
-                "full_answer": full_answer,
-                "model": args.model,
-                "logprobs_k": args.logprobs_k,
-                "temperature": args.temperature,
-                "token_data": token_data,
-            }
-            fout.write(json.dumps(out, ensure_ascii=False) + "\n")
-            fout.flush()
+    asyncio.run(run_all())
 
     # Count results
-    total = 0
+    total_count = 0
     errors = 0
     with open(OUT_JSONL, "r", encoding="utf-8") as f:
         for line in f:
             if not line.strip():
                 continue
             obj = json.loads(line)
-            total += 1
+            total_count += 1
             if "error" in obj:
                 errors += 1
-    print(f"\nDone. {total} entries ({total - errors} valid, {errors} errors)")
+    print(f"\nDone. {total_count} entries ({total_count - errors} valid, {errors} errors)")
     print(f"Output: {OUT_JSONL}")
 
 
