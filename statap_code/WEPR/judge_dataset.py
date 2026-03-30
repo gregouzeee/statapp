@@ -8,14 +8,16 @@ Reads: data/triviaqa_topk.jsonl
 Writes: data/triviaqa_judged.jsonl
 
 Usage:
-    python judge_dataset.py [--batch_size 20]
+    python judge_dataset.py [--batch_size 20] [--concurrency 5]
 """
 
 import argparse
+import asyncio
 import json
-import math
+import logging
 import os
 import re
+import threading
 import time
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -25,12 +27,22 @@ from google import genai
 from google.genai import types
 from tqdm import tqdm
 
+# Set root logger to ERROR so all libraries are silent by default
+logging.basicConfig(
+    level=logging.ERROR,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%H:%M:%S",
+)
+log = logging.getLogger("judge")
+log.setLevel(logging.INFO)
+
 
 # ──────────────────────────── Config ────────────────────────────
 
 DEFAULT_JUDGE_MODEL = "gemini-2.0-flash"
 DEFAULT_BATCH_SIZE = 20
-DEFAULT_MAX_RETRIES = 3
+DEFAULT_MAX_RETRIES = 5
+DEFAULT_CONCURRENCY = 5
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 INPUT_JSONL = DATA_DIR / "triviaqa_topk.jsonl"
@@ -120,6 +132,51 @@ def parse_judgments(raw_text: str, expected_len: int) -> Optional[List[Optional[
         return None
 
 
+# ──────────── Process one batch ───────────────
+
+def judge_one_batch(client, batch: List[Dict], args) -> List[Optional[bool]]:
+    """Judge a single batch, return list of judgments."""
+    prompt = build_judge_prompt(batch)
+    parsed = None
+
+    for attempt in range(1, DEFAULT_MAX_RETRIES + 1):
+        try:
+            resp = client.models.generate_content(
+                model=args.judge_model,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0.0,
+                    max_output_tokens=256,
+                    candidate_count=1,
+                ),
+            )
+            raw = (resp.text or "").strip()
+            parsed = parse_judgments(raw, expected_len=len(batch))
+            if parsed is not None:
+                break
+        except Exception as e:
+            err = str(e)
+            if any(fatal in err for fatal in
+                   ["Credentials", "credentials", "BILLING",
+                    "PERMISSION_DENIED"]):
+                log.error(f"FATAL: {err}")
+                raise
+            is_rate_limit = "429" in err or "RESOURCE_EXHAUSTED" in err
+            if is_rate_limit:
+                wait = min(5.0 * attempt, 30.0)
+                log.warning(f"429 RATE LIMITED (attempt {attempt}/{DEFAULT_MAX_RETRIES}). "
+                            f"Waiting {wait:.0f}s...")
+            else:
+                wait = min(2.0 * attempt, 10.0)
+                log.warning(f"ERROR (attempt {attempt}/{DEFAULT_MAX_RETRIES}): "
+                            f"{err[:150]}. Waiting {wait:.0f}s...")
+            time.sleep(wait)
+
+    if parsed is None:
+        return [None] * len(batch)
+    return parsed
+
+
 # ──────────────────── Main ──────────────────────────────
 
 def main():
@@ -128,6 +185,8 @@ def main():
     parser.add_argument("--judge_model", type=str, default=DEFAULT_JUDGE_MODEL)
     parser.add_argument("--input", type=str, default=str(INPUT_JSONL))
     parser.add_argument("--output", type=str, default=str(OUTPUT_JSONL))
+    parser.add_argument("--concurrency", type=int, default=DEFAULT_CONCURRENCY,
+                        help="Number of parallel judge calls (default: 5)")
     args = parser.parse_args()
 
     load_dotenv()
@@ -171,43 +230,51 @@ def main():
         print("Nothing to do.")
         return
 
-    # Judge in batches
-    total = len(to_judge)
+    # Split into batches
     batch_size = args.batch_size
+    batches = []
+    for start in range(0, len(to_judge), batch_size):
+        batches.append(to_judge[start:start + batch_size])
 
-    with open(output_path, "a", encoding="utf-8") as fout:
-        for start in tqdm(range(0, total, batch_size), desc="Judging", unit="batch"):
-            end = min(start + batch_size, total)
-            batch = to_judge[start:end]
+    print(f"Concurrency: {args.concurrency} parallel calls, {len(batches)} batches of {batch_size}")
 
-            prompt = build_judge_prompt(batch)
-            parsed = None
+    # Shared state
+    write_lock = threading.Lock()
+    semaphore = asyncio.Semaphore(args.concurrency)
 
-            for attempt in range(1, DEFAULT_MAX_RETRIES + 1):
-                try:
-                    resp = client.models.generate_content(
-                        model=args.judge_model,
-                        contents=prompt,
-                        config=types.GenerateContentConfig(
-                            temperature=0.0,
-                            max_output_tokens=256,
-                            candidate_count=1,
-                        ),
-                    )
-                    raw = (resp.text or "").strip()
-                    parsed = parse_judgments(raw, expected_len=len(batch))
-                    if parsed is not None:
-                        break
-                except Exception as e:
-                    time.sleep(min(2.0 * attempt, 10.0))
+    async def judge_async(batch, fout, pbar):
+        async with semaphore:
+            loop = asyncio.get_event_loop()
+            judgments = await loop.run_in_executor(
+                None, judge_one_batch, client, batch, args
+            )
+            with write_lock:
+                for item, judgment in zip(batch, judgments):
+                    item["judge_correct"] = judgment
+                    fout.write(json.dumps(item, ensure_ascii=False) + "\n")
+                fout.flush()
+            pbar.update(1)
 
-            if parsed is None:
-                parsed = [None] * len(batch)
+    async def run_all():
+        t_start = time.monotonic()
+        output_path.parent.mkdir(parents=True, exist_ok=True)
 
-            for item, judgment in zip(batch, parsed):
-                item["judge_correct"] = judgment
-                fout.write(json.dumps(item, ensure_ascii=False) + "\n")
-            fout.flush()
+        with open(output_path, "a", encoding="utf-8") as fout:
+            pbar = tqdm(desc="Judging", unit="batch", total=len(batches))
+            tasks = []
+            for batch in batches:
+                tasks.append(judge_async(batch, fout, pbar))
+                if len(tasks) >= args.concurrency * 2:
+                    await asyncio.gather(*tasks)
+                    tasks = []
+            if tasks:
+                await asyncio.gather(*tasks)
+            pbar.close()
+
+        elapsed = time.monotonic() - t_start
+        log.info(f"Judging done in {elapsed:.0f}s")
+
+    asyncio.run(run_all())
 
     # Summary
     correct = 0
