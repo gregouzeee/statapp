@@ -33,6 +33,7 @@ from sklearn.metrics import (
 )
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 from wepr import (
     epr, wepr_features, wepr_score, wepr_sequence_confidence,
@@ -95,7 +96,7 @@ def bootstrap_single_score(scores: np.ndarray, y: np.ndarray,
         scores = -scores
 
     aucs = []
-    for _ in range(n_bootstrap):
+    for _ in tqdm(range(n_bootstrap), desc="  Bootstrap", unit="iter", leave=False):
         idx = rng.choice(len(y), size=len(y), replace=True)
         y_b = y[idx]
         s_b = scores[idx]
@@ -119,7 +120,7 @@ def bootstrap_learned(X: np.ndarray, y: np.ndarray,
     n = len(y)
     aucs = []
 
-    for _ in range(n_bootstrap):
+    for _ in tqdm(range(n_bootstrap), desc="  Bootstrap", unit="iter", leave=False):
         idx = rng.choice(n, size=n, replace=True)
         oob_mask = np.ones(n, dtype=bool)
         oob_mask[idx] = False
