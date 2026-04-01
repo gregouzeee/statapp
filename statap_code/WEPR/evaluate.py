@@ -114,10 +114,20 @@ def bootstrap_single_score(scores: np.ndarray, y: np.ndarray,
 
 
 def bootstrap_learned(X: np.ndarray, y: np.ndarray,
-                      n_bootstrap: int, seed: int = 42) -> Dict:
-    """Bootstrap evaluation for a learned method (train on bootstrap, test on OOB)."""
+                      n_bootstrap: int, seed: int = 42,
+                      subsample: int = 10000) -> Dict:
+    """Bootstrap evaluation for a learned method (train on bootstrap, test on OOB).
+    Subsamples to `subsample` rows for speed when dataset is large."""
     rng = np.random.RandomState(seed)
+
+    # Subsample for speed if dataset is large
     n = len(y)
+    if n > subsample:
+        sub_idx = rng.choice(n, size=subsample, replace=False)
+        X = X[sub_idx]
+        y = y[sub_idx]
+        n = subsample
+
     aucs = []
 
     for _ in tqdm(range(n_bootstrap), desc="  Bootstrap", unit="iter", leave=False):
@@ -135,7 +145,8 @@ def bootstrap_learned(X: np.ndarray, y: np.ndarray,
         X_train = scaler.fit_transform(X[idx])
         X_test = scaler.transform(X[oob_idx])
 
-        clf = LogisticRegression(C=np.inf, max_iter=1000, random_state=seed)
+        clf = LogisticRegression(C=1e10, max_iter=500, solver="lbfgs",
+                                 random_state=seed)
         clf.fit(X_train, y[idx])
 
         y_prob = clf.predict_proba(X_test)[:, 1]
