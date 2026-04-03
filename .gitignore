@@ -211,3 +211,6 @@ MIDV/datasets/
 
 # PyTorch model files
 *.pt
+
+# WEPR data
+statap_code/WEPR/data/
