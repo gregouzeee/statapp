@@ -1,0 +1,10 @@
+{
+  "n_rows": 1319,
+  "n_correct": 1261,
+  "n_wrong": 58,
+  "accuracy": 0.956027293404094,
+  "best_univariate_feature": "all_entropy_last_third_mean",
+  "best_univariate_auc": 0.6810960102819328,
+  "best_logit_model": "all_numeric",
+  "best_logit_auc": 0.7286636221936612
+}

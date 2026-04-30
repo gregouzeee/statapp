@@ -1,0 +1,288 @@
+
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Feature Summary</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            h1 {
+                margin-bottom: 16px;
+            }
+            .table-container {
+                width: 100%;
+                max-width: 100%;
+                overflow-x: auto;
+                overflow-y: auto;
+                max-height: 80vh;
+                border: 1px solid #ccc;
+            }
+            table {
+                border-collapse: collapse;
+                min-width: 1200px;
+                width: max-content;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 8px 10px;
+                text-align: right;
+                white-space: nowrap;
+            }
+            th {
+                background-color: #f4f4f4;
+                position: sticky;
+                top: 0;
+                z-index: 2;
+            }
+            td:first-child, th:first-child {
+                text-align: left;
+                position: sticky;
+                left: 0;
+                background-color: #fafafa;
+                z-index: 3;
+            }
+            tr:nth-child(even) {
+                background-color: #fcfcfc;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Logprob Feature Summary</h1>
+        <div class="table-container">
+            <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>feature</th>
+      <th>correct_mean</th>
+      <th>correct_std</th>
+      <th>wrong_mean</th>
+      <th>wrong_std</th>
+      <th>diff_wrong_minus_correct</th>
+      <th>abs_diff</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>all_length</td>
+      <td>150.4274</td>
+      <td>61.7432</td>
+      <td>190.7931</td>
+      <td>102.9580</td>
+      <td>40.3657</td>
+      <td>40.3657</td>
+    </tr>
+    <tr>
+      <td>reasoning_length</td>
+      <td>146.5702</td>
+      <td>60.9816</td>
+      <td>186.3621</td>
+      <td>103.3048</td>
+      <td>39.7919</td>
+      <td>39.7919</td>
+    </tr>
+    <tr>
+      <td>reasoning_margin_mean</td>
+      <td>11.3283</td>
+      <td>1.7998</td>
+      <td>10.2296</td>
+      <td>2.4255</td>
+      <td>-1.0986</td>
+      <td>1.0986</td>
+    </tr>
+    <tr>
+      <td>all_margin_mean</td>
+      <td>11.4830</td>
+      <td>1.7584</td>
+      <td>10.4159</td>
+      <td>2.3266</td>
+      <td>-1.0671</td>
+      <td>1.0671</td>
+    </tr>
+    <tr>
+      <td>final_margin_mean</td>
+      <td>16.7946</td>
+      <td>2.4851</td>
+      <td>15.7498</td>
+      <td>3.4395</td>
+      <td>-1.0447</td>
+      <td>1.0447</td>
+    </tr>
+    <tr>
+      <td>final_length</td>
+      <td>3.8573</td>
+      <td>9.1372</td>
+      <td>4.4310</td>
+      <td>3.0786</td>
+      <td>0.5738</td>
+      <td>0.5738</td>
+    </tr>
+    <tr>
+      <td>reasoning_top1_min</td>
+      <td>-1.4675</td>
+      <td>0.5987</td>
+      <td>-1.7398</td>
+      <td>0.6896</td>
+      <td>-0.2723</td>
+      <td>0.2723</td>
+    </tr>
+    <tr>
+      <td>reasoning_margin_min</td>
+      <td>-0.1223</td>
+      <td>0.4195</td>
+      <td>-0.2799</td>
+      <td>0.5065</td>
+      <td>-0.1576</td>
+      <td>0.1576</td>
+    </tr>
+    <tr>
+      <td>reasoning_entropy_max</td>
+      <td>1.2200</td>
+      <td>0.2174</td>
+      <td>1.3491</td>
+      <td>0.1938</td>
+      <td>0.1290</td>
+      <td>0.1290</td>
+    </tr>
+    <tr>
+      <td>reasoning_longest_run_lp_below_-2</td>
+      <td>0.1753</td>
+      <td>0.3803</td>
+      <td>0.2759</td>
+      <td>0.4509</td>
+      <td>0.1006</td>
+      <td>0.1006</td>
+    </tr>
+    <tr>
+      <td>reasoning_entropy_last_minus_first_third_mean</td>
+      <td>-0.0797</td>
+      <td>0.0776</td>
+      <td>0.0028</td>
+      <td>0.1670</td>
+      <td>0.0825</td>
+      <td>0.0825</td>
+    </tr>
+    <tr>
+      <td>reasoning_entropy_mean</td>
+      <td>0.1164</td>
+      <td>0.0521</td>
+      <td>0.1714</td>
+      <td>0.1090</td>
+      <td>0.0550</td>
+      <td>0.0550</td>
+    </tr>
+    <tr>
+      <td>reasoning_top1_last_minus_first_third_mean</td>
+      <td>0.0509</td>
+      <td>0.0591</td>
+      <td>-0.0037</td>
+      <td>0.1194</td>
+      <td>-0.0546</td>
+      <td>0.0546</td>
+    </tr>
+    <tr>
+      <td>all_entropy_mean</td>
+      <td>0.1136</td>
+      <td>0.0507</td>
+      <td>0.1654</td>
+      <td>0.0975</td>
+      <td>0.0519</td>
+      <td>0.0519</td>
+    </tr>
+    <tr>
+      <td>reasoning_entropy_std</td>
+      <td>0.2491</td>
+      <td>0.0597</td>
+      <td>0.3001</td>
+      <td>0.0858</td>
+      <td>0.0509</td>
+      <td>0.0509</td>
+    </tr>
+    <tr>
+      <td>reasoning_top1_std</td>
+      <td>0.2092</td>
+      <td>0.0752</td>
+      <td>0.2546</td>
+      <td>0.1028</td>
+      <td>0.0454</td>
+      <td>0.0454</td>
+    </tr>
+    <tr>
+      <td>all_top1_std</td>
+      <td>0.2070</td>
+      <td>0.0744</td>
+      <td>0.2513</td>
+      <td>0.0998</td>
+      <td>0.0443</td>
+      <td>0.0443</td>
+    </tr>
+    <tr>
+      <td>final_top1_min</td>
+      <td>-0.0291</td>
+      <td>0.1424</td>
+      <td>-0.0727</td>
+      <td>0.2297</td>
+      <td>-0.0436</td>
+      <td>0.0436</td>
+    </tr>
+    <tr>
+      <td>reasoning_top1_mean</td>
+      <td>-0.0705</td>
+      <td>0.0361</td>
+      <td>-0.1049</td>
+      <td>0.0776</td>
+      <td>-0.0344</td>
+      <td>0.0344</td>
+    </tr>
+    <tr>
+      <td>all_top1_mean</td>
+      <td>-0.0688</td>
+      <td>0.0352</td>
+      <td>-0.1009</td>
+      <td>0.0691</td>
+      <td>-0.0321</td>
+      <td>0.0321</td>
+    </tr>
+    <tr>
+      <td>final_entropy_mean</td>
+      <td>0.0160</td>
+      <td>0.0426</td>
+      <td>0.0314</td>
+      <td>0.0681</td>
+      <td>0.0154</td>
+      <td>0.0154</td>
+    </tr>
+    <tr>
+      <td>final_top1_mean</td>
+      <td>-0.0074</td>
+      <td>0.0369</td>
+      <td>-0.0144</td>
+      <td>0.0440</td>
+      <td>-0.0070</td>
+      <td>0.0070</td>
+    </tr>
+    <tr>
+      <td>reasoning_ratio_lp_below_-2</td>
+      <td>0.0014</td>
+      <td>0.0037</td>
+      <td>0.0022</td>
+      <td>0.0050</td>
+      <td>0.0008</td>
+      <td>0.0008</td>
+    </tr>
+    <tr>
+      <td>reasoning_ratio_lp_below_-3</td>
+      <td>0.0001</td>
+      <td>0.0009</td>
+      <td>0.0002</td>
+      <td>0.0013</td>
+      <td>0.0001</td>
+      <td>0.0001</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+    </body>
+    </html>
+    

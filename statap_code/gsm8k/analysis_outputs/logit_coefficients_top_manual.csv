@@ -1,0 +1,12 @@
+feature,coef
+reasoning_margin_mean,1.5260000470180448
+all_margin_mean,-1.2573404794999816
+reasoning_entropy_last_minus_first_third_mean,-0.47307808126604617
+reasoning_length,-0.4585548064113005
+reasoning_entropy_mean,-0.2943340966077334
+reasoning_longest_run_lp_below_-2,0.2938885355991067
+reasoning_entropy_max,-0.13475590823441855
+all_length,-0.08751856883262653
+reasoning_margin_min,0.060283890351915836
+final_margin_mean,0.025751051334826344
+reasoning_top1_min,0.02066692299509395

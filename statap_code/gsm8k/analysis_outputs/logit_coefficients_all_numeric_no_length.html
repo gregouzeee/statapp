@@ -1,0 +1,302 @@
+
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>logit_coefficients_all_numeric_no_length</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            .table-container {
+                width: 100%;
+                overflow-x: auto;
+                max-height: 85vh;
+                overflow-y: auto;
+                border: 1px solid #ccc;
+            }
+            table {
+                border-collapse: collapse;
+                min-width: 1200px;
+                width: max-content;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 6px 10px;
+                white-space: nowrap;
+                text-align: right;
+            }
+            th {
+                background: #f5f5f5;
+                position: sticky;
+                top: 0;
+            }
+            td:first-child, th:first-child {
+                text-align: left;
+                position: sticky;
+                left: 0;
+                background: #fafafa;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>logit_coefficients_all_numeric_no_length</h1>
+        <div class="table-container">
+            <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>feature</th>
+      <th>coef</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>all_top1_mean</td>
+      <td>-1.732670</td>
+    </tr>
+    <tr>
+      <td>reasoning_entropy_mean</td>
+      <td>-1.668818</td>
+    </tr>
+    <tr>
+      <td>final_margin_min</td>
+      <td>1.662278</td>
+    </tr>
+    <tr>
+      <td>reasoning_top1_mean</td>
+      <td>-1.657533</td>
+    </tr>
+    <tr>
+      <td>all_entropy_mean</td>
+      <td>-1.511189</td>
+    </tr>
+    <tr>
+      <td>all_entropy_last_third_mean</td>
+      <td>1.336864</td>
+    </tr>
+    <tr>
+      <td>final_top1_min</td>
+      <td>-1.254214</td>
+    </tr>
+    <tr>
+      <td>reasoning_entropy_last_minus_first_third_mean</td>
+      <td>-1.231100</td>
+    </tr>
+    <tr>
+      <td>all_top1_first_third_mean</td>
+      <td>1.111320</td>
+    </tr>
+    <tr>
+      <td>final_margin_std</td>
+      <td>1.001154</td>
+    </tr>
+    <tr>
+      <td>final_top1_slope</td>
+      <td>-0.934302</td>
+    </tr>
+    <tr>
+      <td>final_entropy_std</td>
+      <td>-0.932558</td>
+    </tr>
+    <tr>
+      <td>reasoning_entropy_last_third_mean</td>
+      <td>-0.843584</td>
+    </tr>
+    <tr>
+      <td>all_top1_last_minus_first_third_mean</td>
+      <td>-0.710793</td>
+    </tr>
+    <tr>
+      <td>final_margin_mean</td>
+      <td>-0.707479</td>
+    </tr>
+    <tr>
+      <td>all_entropy_last_minus_first_third_mean</td>
+      <td>0.700041</td>
+    </tr>
+    <tr>
+      <td>reasoning_entropy_first_third_mean</td>
+      <td>0.642343</td>
+    </tr>
+    <tr>
+      <td>final_entropy_max</td>
+      <td>0.637832</td>
+    </tr>
+    <tr>
+      <td>final_top1_last_minus_first_third_mean</td>
+      <td>-0.609440</td>
+    </tr>
+    <tr>
+      <td>final_top1_mean</td>
+      <td>0.590743</td>
+    </tr>
+    <tr>
+      <td>final_top1_last_third_mean</td>
+      <td>-0.547468</td>
+    </tr>
+    <tr>
+      <td>all_top1_slope</td>
+      <td>0.531030</td>
+    </tr>
+    <tr>
+      <td>all_entropy_std</td>
+      <td>-0.495227</td>
+    </tr>
+    <tr>
+      <td>reasoning_top1_last_third_mean</td>
+      <td>0.472444</td>
+    </tr>
+    <tr>
+      <td>all_top1_min</td>
+      <td>0.393441</td>
+    </tr>
+    <tr>
+      <td>reasoning_top1_min</td>
+      <td>0.391560</td>
+    </tr>
+    <tr>
+      <td>all_entropy_first_third_mean</td>
+      <td>0.374080</td>
+    </tr>
+    <tr>
+      <td>gold_answer</td>
+      <td>-0.367676</td>
+    </tr>
+    <tr>
+      <td>all_margin_std</td>
+      <td>0.355659</td>
+    </tr>
+    <tr>
+      <td>final_top1_first_third_mean</td>
+      <td>0.350542</td>
+    </tr>
+    <tr>
+      <td>all_margin_mean</td>
+      <td>-0.347668</td>
+    </tr>
+    <tr>
+      <td>all_top1_last_third_mean</td>
+      <td>0.331755</td>
+    </tr>
+    <tr>
+      <td>reasoning_entropy_std</td>
+      <td>-0.330664</td>
+    </tr>
+    <tr>
+      <td>reasoning_top1_slope</td>
+      <td>0.314797</td>
+    </tr>
+    <tr>
+      <td>reasoning_ratio_lp_below_-3</td>
+      <td>0.264652</td>
+    </tr>
+    <tr>
+      <td>reasoning_top1_first_third_mean</td>
+      <td>0.222221</td>
+    </tr>
+    <tr>
+      <td>all_ratio_lp_below_-3</td>
+      <td>0.203812</td>
+    </tr>
+    <tr>
+      <td>all_top1_std</td>
+      <td>0.197630</td>
+    </tr>
+    <tr>
+      <td>reasoning_top1_std</td>
+      <td>0.185365</td>
+    </tr>
+    <tr>
+      <td>final_entropy_last_minus_first_third_mean</td>
+      <td>-0.180233</td>
+    </tr>
+    <tr>
+      <td>reasoning_top1_last_minus_first_third_mean</td>
+      <td>0.173008</td>
+    </tr>
+    <tr>
+      <td>final_entropy_last_third_mean</td>
+      <td>-0.169044</td>
+    </tr>
+    <tr>
+      <td>all_ratio_lp_below_-2</td>
+      <td>0.161360</td>
+    </tr>
+    <tr>
+      <td>reasoning_longest_run_lp_below_-2</td>
+      <td>0.156820</td>
+    </tr>
+    <tr>
+      <td>all_longest_run_lp_below_-2</td>
+      <td>0.154387</td>
+    </tr>
+    <tr>
+      <td>reasoning_margin_std</td>
+      <td>0.122813</td>
+    </tr>
+    <tr>
+      <td>final_entropy_first_third_mean</td>
+      <td>0.104210</td>
+    </tr>
+    <tr>
+      <td>reasoning_ratio_lp_below_-2</td>
+      <td>-0.098498</td>
+    </tr>
+    <tr>
+      <td>final_entropy_mean</td>
+      <td>0.086612</td>
+    </tr>
+    <tr>
+      <td>reasoning_margin_mean</td>
+      <td>-0.046884</td>
+    </tr>
+    <tr>
+      <td>reasoning_entropy_max</td>
+      <td>0.038052</td>
+    </tr>
+    <tr>
+      <td>all_entropy_max</td>
+      <td>0.036663</td>
+    </tr>
+    <tr>
+      <td>final_longest_run_lp_below_-2</td>
+      <td>-0.030395</td>
+    </tr>
+    <tr>
+      <td>final_ratio_lp_below_-2</td>
+      <td>-0.030395</td>
+    </tr>
+    <tr>
+      <td>reasoning_margin_min</td>
+      <td>0.017957</td>
+    </tr>
+    <tr>
+      <td>all_margin_min</td>
+      <td>0.008186</td>
+    </tr>
+    <tr>
+      <td>final_top1_std</td>
+      <td>0.003890</td>
+    </tr>
+    <tr>
+      <td>final_candidate_count_mean</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <td>all_candidate_count_mean</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <td>final_ratio_lp_below_-3</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <td>reasoning_candidate_count_mean</td>
+      <td>0.000000</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+    </body>
+    </html>
+    

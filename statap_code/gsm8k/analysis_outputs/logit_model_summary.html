@@ -1,0 +1,117 @@
+
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>logit_model_summary</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            .table-container {
+                width: 100%;
+                overflow-x: auto;
+                max-height: 85vh;
+                overflow-y: auto;
+                border: 1px solid #ccc;
+            }
+            table {
+                border-collapse: collapse;
+                min-width: 1200px;
+                width: max-content;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 6px 10px;
+                white-space: nowrap;
+                text-align: right;
+            }
+            th {
+                background: #f5f5f5;
+                position: sticky;
+                top: 0;
+            }
+            td:first-child, th:first-child {
+                text-align: left;
+                position: sticky;
+                left: 0;
+                background: #fafafa;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>logit_model_summary</h1>
+        <div class="table-container">
+            <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>model_name</th>
+      <th>n_features</th>
+      <th>cv_roc_auc</th>
+      <th>cv_average_precision</th>
+      <th>class_balance_correct_rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>all_numeric</td>
+      <td>64</td>
+      <td>0.728664</td>
+      <td>0.977863</td>
+      <td>0.956027</td>
+    </tr>
+    <tr>
+      <td>all_numeric_no_length</td>
+      <td>61</td>
+      <td>0.718327</td>
+      <td>0.975714</td>
+      <td>0.956027</td>
+    </tr>
+    <tr>
+      <td>top_manual</td>
+      <td>11</td>
+      <td>0.698296</td>
+      <td>0.974961</td>
+      <td>0.956027</td>
+    </tr>
+    <tr>
+      <td>reasoning_only</td>
+      <td>21</td>
+      <td>0.678840</td>
+      <td>0.972334</td>
+      <td>0.956027</td>
+    </tr>
+    <tr>
+      <td>reasoning_no_length</td>
+      <td>20</td>
+      <td>0.678717</td>
+      <td>0.972337</td>
+      <td>0.956027</td>
+    </tr>
+    <tr>
+      <td>all_only</td>
+      <td>21</td>
+      <td>0.668955</td>
+      <td>0.968837</td>
+      <td>0.956027</td>
+    </tr>
+    <tr>
+      <td>final_only</td>
+      <td>21</td>
+      <td>0.665222</td>
+      <td>0.972101</td>
+      <td>0.956027</td>
+    </tr>
+    <tr>
+      <td>all_no_length</td>
+      <td>20</td>
+      <td>0.662569</td>
+      <td>0.967842</td>
+      <td>0.956027</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+    </body>
+    </html>
+    
