@@ -137,7 +137,7 @@ def run_conformal_on_paired():
     """
     LAC et APS sur les 107 questions (fichier logit temp0_5 filtré).
     """
-    from statap_code.Conformal_prediction.conformal_prediction import (
+    from statap_code.Conformal_prediction.functions.conformal_prediction import (
         load_jsonl, evaluate, probs_vector, true_label,
         lac_score, aps_score, conformal_quantile,
         lac_predict_set, aps_predict_set,
@@ -206,7 +206,7 @@ def plot_unified_comparison():
     - Conformal : accuracy du top-1 dans les ensembles LAC à différents α
       → on trace coverage = 1-α vs top1_accuracy
     """
-    from statap_code.Conformal_prediction.conformal_prediction import (
+    from statap_code.Conformal_prediction.functions.conformal_prediction import (
         load_jsonl, probs_vector, true_label,
         lac_score, conformal_quantile, lac_predict_set,
     )

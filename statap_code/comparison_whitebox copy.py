@@ -10,7 +10,7 @@ import re
 from tqdm import tqdm
 
 # Import de votre module existant
-from white_box import UnifiedProbGeminiBatch
+from statap_code.whitebox_method.white_box import UnifiedProbGeminiBatch
 from google import genai
 from google.genai import types
 
