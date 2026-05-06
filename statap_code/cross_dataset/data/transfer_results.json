@@ -1,0 +1,21 @@
+{
+  "K": 10,
+  "n_triviaqa": 73793,
+  "n_gsm8k": 1319,
+  "gsm8k_field": "token_data",
+  "auc_in_domain": {
+    "TriviaQA": 0.6812772571820237,
+    "GSM8K": 0.8291272344900105
+  },
+  "auc_transfer": {
+    "TriviaQA_to_GSM8K": 0.7931125131440588,
+    "GSM8K_to_TriviaQA": 0.47747172380963077
+  },
+  "auc_full_table": {
+    "TriviaQA_model_on_TriviaQA": 0.6812772571820237,
+    "TriviaQA_model_on_GSM8K": 0.7931125131440588,
+    "GSM8K_model_on_GSM8K": 0.8291272344900105,
+    "GSM8K_model_on_TriviaQA": 0.47747172380963077
+  },
+  "report_baseline_section_4_auc": 0.729
+}

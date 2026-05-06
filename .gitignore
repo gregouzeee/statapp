@@ -220,3 +220,11 @@ MIDV/datasets/
 
 # WEPR data
 statap_code/WEPR/data/
+
+# cross_dataset large jsonl files (reproducible from scripts)
+statap_code/cross_dataset/data/gsm8k_topk.jsonl
+statap_code/cross_dataset/data/gsm8k_judged.jsonl
+statap_code/cross_dataset/data/triviaqa_num_topk.jsonl
+statap_code/cross_dataset/data/eli5_topk.jsonl
+statap_code/cross_dataset/data/se_gsm8k.jsonl
+statap_code/cross_dataset/data/se_triviaqa_numeric.jsonl
