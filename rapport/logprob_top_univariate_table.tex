@@ -1,0 +1,22 @@
+\begin{table}[htbp]
+\centering
+\caption{Plus discriminantes variables univariées entre réponses correctes et incorrectes.}
+\label{tab:logprob_top_univariate}
+\begin{tabular}{lcccc}
+\toprule
+Variable & Mean correct & Mean wrong & AUC & FDR-BH \\
+\midrule
+Full generation: entropymean on last third & 0.077 & 0.158 & 0.681 & 0.000 \\
+Reasoning: entropymean on last third & 0.083 & 0.177 & 0.681 & 0.000 \\
+Reasoning: entropy max & 1.220 & 1.349 & 0.675 & 0.000 \\
+Full generation: entropy max & 1.220 & 1.349 & 0.674 & 0.000 \\
+Full generation: top1mean on last third & -0.045 & -0.099 & 0.670 & 0.000 \\
+Reasoning: entropy std & 0.249 & 0.300 & 0.668 & 0.000 \\
+Full generation: entropy std & 0.247 & 0.298 & 0.668 & 0.000 \\
+Reasoning: top1mean on last third & -0.049 & -0.110 & 0.667 & 0.000 \\
+Full generation: entropy mean & 0.114 & 0.165 & 0.666 & 0.000 \\
+Reasoning: entropy mean & 0.116 & 0.171 & 0.665 & 0.000 \\
+\bottomrule
+\end{tabular}
+
+\end{table}

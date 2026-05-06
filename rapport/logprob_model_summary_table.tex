@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\caption{Performance des différents ensembles de variables pour la détection des erreurs.}
+\label{tab:logprob_model_summary}
+\begin{tabular}{lccc}
+\toprule
+Feature set & Nb. features & ROC-AUC & Average Precision \\
+\midrule
+All variables & 64 & 0.729 & 0.978 \\
+All variables (without length) & 61 & 0.718 & 0.976 \\
+Interpretable subset & 11 & 0.698 & 0.975 \\
+Reasoning only & 21 & 0.679 & 0.972 \\
+Reasoning only (without length) & 20 & 0.679 & 0.972 \\
+Full-generation only & 21 & 0.669 & 0.969 \\
+Final-answer only & 21 & 0.665 & 0.972 \\
+Full-generation only (without length) & 20 & 0.663 & 0.968 \\
+\bottomrule
+\end{tabular}
+
+\end{table}
