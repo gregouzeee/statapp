@@ -1,3 +1,9 @@
+# macOS
+.DS_Store
+
+# Local files
+tableau de bord.xlsx
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
